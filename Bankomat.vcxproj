@@ -155,19 +155,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Person.cpp" />
-    <ClCompile Include="src\Bankomat.cpp" />
+    <ClCompile Include="src\SeniorAccount.cpp" />
+    <ClCompile Include="src\AccountStatus.cpp" />
+    <ClCompile Include="app\Bankomat.cpp" />
+    <ClCompile Include="src\StandardAccount.cpp" />
     <ClCompile Include="src\sqlite3.c" />
     <ClCompile Include="src\sqlite_use.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\Person.h" />
+    <ClCompile Include="tests\assert_values.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="packages.config" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\AccountStatus.h" />
+    <ClInclude Include="include\StandardAccount.h" />
+    <ClInclude Include="include\SeniorAccount.h" />
+    <ClInclude Include="tests\assert_values.h" />
+    <ClInclude Include="tests\importTests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
