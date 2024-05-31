@@ -1,6 +1,6 @@
 ﻿### Bankomat
 ## TODO:
-# ** >> Dodać podstawową klasę Bankomatu i dziedziczenie, **
+# ** Dodać podstawową klasę Bankomatu i dziedziczenie, **
 	>> Tworzenie kont
         Metoda umożliwiająca tworzenie nowego konta bankowego.
         Parametry: dane klienta, początkowy depozyt itp.
@@ -50,13 +50,13 @@
         Metody umożliwiające zarządzanie kontami w różnych walutach.
         Parametry: numer konta, waluta, kwota.
         Przechowywanie i przeliczanie salda w różnych walutach.
-# ** >> Wymyśleć jakieś klasy, **
+# __ Wymyśleć jakieś klasy,__
     >> Standardowy klient
     >> Rodzic
     >> Konto dla dzieci
     >> Konto dla firm
     >> Konto dla Seniora
-# ** >> Funkcja hashująca, aby zabezpieczyć dane, **
+# **  Funkcja hashująca, aby zabezpieczyć dane, **
     >> Zabezpieczanie kont
         Metody związane z zabezpieczeniem kont, takie jak zmiana hasła, ustawianie pytania bezpieczeństwa itp.
         Parametry: numer konta, stare hasło, nowe hasło, odpowiedź na pytanie bezpieczeństwa itp.
@@ -66,4 +66,4 @@
         Metoda umożliwiająca logowanie użytkowników do systemu.
         Parametry: nazwa użytkownika, hasło.
         Sprawdzenie poprawności danych uwierzytelniających, zarządzanie sesjami użytkowników.
-# ** >> Ogarnąć SQLite'a i interfejs graficzny. **
+# **  Ogarnąć SQLite'a i interfejs graficzny. **
