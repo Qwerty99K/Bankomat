@@ -12,16 +12,23 @@ ll StandardAccount::getBalance() const {
 }
 
 ll StandardAccount::deposit(const ll& amount) const {
-	this->balance += amount;
-	return amount;
+	if (0 < amount) {
+		this->balance += amount;
+		return amount;
+	}
+	else {
+		std::cout << "Ujemna kwota. " << std::endl;
+	}
 }
 
 ll StandardAccount::withdraw(const ll& amount) const {
-	if (this->balance < amount) {
-		std::cout << "Blad" << std::endl;
+	if (amount > 0 && amount < LIMIT && this->balance > amount) {
+		this->balance -= amount;
+		return amount;
 	}
-	this->balance -= amount;
-	return amount;
+	else {
+		std::cout << "Za duzo chcesz wyplacic. " << std::endl;
+	}
 }
 
 /*

@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ChildAccount.cpp" />
     <ClCompile Include="src\SeniorAccount.cpp" />
     <ClCompile Include="src\AccountStatus.cpp" />
     <ClCompile Include="app\Bankomat.cpp" />
@@ -170,6 +171,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ChildAccount.h" />
     <ClInclude Include="include\AccountStatus.h" />
     <ClInclude Include="include\StandardAccount.h" />
     <ClInclude Include="include\SeniorAccount.h" />

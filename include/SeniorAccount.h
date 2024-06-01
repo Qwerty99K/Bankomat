@@ -9,12 +9,11 @@ public:
 	SeniorAccount(const std::string&, const std::string&,
 		const std::string&, const std::string&, const ll&,
 		const unsigned int&, const std::string&, const std::string&);	// bedziemy chcieli aby podali wszystko, jeden konstruktor wystarczy
-		//ll getBalance() const;
-		//ll deposit() const; // nie wiem czy bedziemy robic wirtualne, definicja bo kazda taka sama bedzie?
-		//ll withdraw() const;
+	ll transferFee() const; // platnosc za transfer kaski	
+		
 
 private:
-
+	static constexpr ll LIMIT{ 300 };
 	// numer konta
 	// zhashowac potem te dane
 	// powiadomienia - zobaczy sie potem, jak bedziemy czytac dane (kazdy przelew daje ping?)
