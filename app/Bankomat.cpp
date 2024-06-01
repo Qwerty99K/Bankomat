@@ -2,9 +2,11 @@
 #include "../include/StandardAccount.h"
 #include "../include/SeniorAccount.h"
 #include "../tests/importTests.h"
-
+#include "../include/sqlite_use.h"
 int main() {
-	assertValues();
+	//assertValues();
+	createDatabase();
+	// baza nie dziala
 	return 0;
 }
 

@@ -169,10 +169,12 @@
     <None Include=".gitignore" />
     <None Include="packages.config" />
     <None Include="README.md" />
+    <None Include="resources\USERS_DATABASE.db" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ChildAccount.h" />
     <ClInclude Include="include\AccountStatus.h" />
+    <ClInclude Include="include\sqlite_use.h" />
     <ClInclude Include="include\StandardAccount.h" />
     <ClInclude Include="include\SeniorAccount.h" />
     <ClInclude Include="tests\assert_values.h" />

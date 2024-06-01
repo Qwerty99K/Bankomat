@@ -45,6 +45,7 @@
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="README.md" />
+    <None Include="resources\USERS_DATABASE.db" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\StandardAccount.h">
@@ -63,6 +64,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ChildAccount.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sqlite_use.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
