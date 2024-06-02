@@ -27,9 +27,6 @@
     <ClCompile Include="src\StandardAccount.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\AccountStatus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\SeniorAccount.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,6 +34,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ChildAccount.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mainMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,7 +51,7 @@
     <ClInclude Include="include\StandardAccount.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\AccountStatus.h">
+    <ClInclude Include="include\Status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SeniorAccount.h">
@@ -69,5 +69,25 @@
     <ClInclude Include="include\sqlite_use.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3ext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\bank.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\background.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\NerdFont.ttf" />
   </ItemGroup>
 </Project>
