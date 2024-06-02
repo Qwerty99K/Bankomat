@@ -12,7 +12,7 @@
 //    background.setScale(BG_WIDTH_SCALE, BG_HEIGHT_SCALE);
 //      zobaczyc potem czemu nie dziala
 //}
-
+extern void initLogMenu(sf::RenderWindow* window);
 void setBankTexture(sf::Texture& tbank_ico) {
     if (!tbank_ico.loadFromFile(BANK_ICO_PATH)) {
         throw std::string("Cannot load the texture.");
@@ -32,8 +32,8 @@ void setBankName(sf::Text& bank_name, const sf::Vector2<unsigned int>& iconSize)
 }
 
 void initInterface(const int& width, const int& height) {
-    sf::RenderWindow window(sf::VideoMode(width, height), MAIN_NAME);
-    window.setVerticalSyncEnabled(true);
+    sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode(width, height), MAIN_NAME);
+    window->setVerticalSyncEnabled(true);
     // setBackground(bg);
 
     sf::Sprite bg;
@@ -76,24 +76,25 @@ void initInterface(const int& width, const int& height) {
     
     // fajny interfejs potem, byle dziala.
 
-    while (window.isOpen()) {
+    while (window->isOpen()) {
         sf::Event event;
-        while (window.pollEvent(event))
+        while (window->pollEvent(event))
         {
             // Close window: exit
             if (event.type == sf::Event::Closed)
-                window.close();
+                window->close();
 
             // Check if mouse clicked
             if (event.type == sf::Event::MouseButtonPressed) {
                 // Get mouse position
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
 
                 // Check if clicked on LOGIN
                 if (loginText.getGlobalBounds().contains(mousePos.x, mousePos.y)) {
                     // Handle login
                     // For now, just print a message
                     std::cout << "LOGIN clicked!" << std::endl;
+                    initLogMenu(window);
                 }
 
                 // Check if clicked on REGISTER
@@ -106,21 +107,51 @@ void initInterface(const int& width, const int& height) {
                 // Check if clicked on EXIT
                 if (exitText.getGlobalBounds().contains(mousePos.x, mousePos.y)) {
                     // Close window
-                    window.close();
+                    window->close();
                 }
             }
         }
-        window.clear(sf::Color::White);
-        window.draw(bg); // przesunac na lepszy
-        window.draw(dimRect);
-        window.draw(bankIcon);
-        window.draw(bankName);
+        window->clear(sf::Color::White);
+        window->draw(bg); // przesunac na lepszy
+        window->draw(dimRect);
+        window->draw(bankIcon);
+        window->draw(bankName);
 
-        window.draw(loginText);
-        window.draw(registerText);
-        window.draw(exitText);
-        window.display();
+        window->draw(loginText);
+        window->draw(registerText);
+        window->draw(exitText);
+        window->display();
     }
 }   
 
 // wrzucic to w klase
+// login -> strona bankowa
+// rejestracja -> baza danych -> login
+// exit -> exit
+
+
+void initLogMenu(sf::RenderWindow* window) {
+    window->setVerticalSyncEnabled(true);
+    while (window->isOpen()) {
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window->close();
+            }
+        }
+        window->clear(sf::Color::White);
+        window->display();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
