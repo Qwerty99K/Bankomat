@@ -14,36 +14,32 @@
 #define WIDTH 1280
 #define HEIGHT 720
 
-
 class WindowInit {
 public:
-	WindowInit();
-	void menuInit();
-	void loginMenuInit();
-
-
+    WindowInit();
+    void menuInit();
+    void loginMenuInit();
 
 private:
-	sf::RenderWindow* window;
-	sf::Sprite* menuBackground; //bg
-	sf::Texture* menuBGTexture; //tbg
-	
-	sf::Sprite* bankIco;
-	sf::Vector2u bankIcoSz;
-	sf::Texture* bankIcoTexture;
+    sf::RenderWindow window;
+    sf::Sprite menuBackground; // bg
+    sf::Texture menuBGTexture; // tbg
 
-	sf::Font* menuFont;
-	sf::Text* bankName;
+    sf::Sprite bankIco;
+    sf::Vector2u bankIcoSz;
+    sf::Texture bankIcoTexture;
 
-	sf::Text* logText;
-	sf::Text* regText;
-	sf::Text* exitText;
+    sf::Font menuFont;
+    sf::Text bankName;
 
-	sf::Vector2f* scrPosition; // the mid points of screen
-	sf::RectangleShape* bgButton;
-	sf::RectangleShape* dimRect;
-	sf::RectangleShape* logButton;
-	sf::RectangleShape* regButton;
-	sf::RectangleShape* exitButton;
+    sf::Text logText;
+    sf::Text regText;
+    sf::Text exitText;
 
+    sf::Vector2f scrPosition; // the mid points of screen
+    sf::RectangleShape bgButton;
+    sf::RectangleShape dimRect;
+    sf::RectangleShape logButton;
+    sf::RectangleShape regButton;
+    sf::RectangleShape exitButton;
 };
