@@ -126,6 +126,8 @@ void WindowInit::menuInit() {
     }
 }
 
+// dodac loading ??
+
 void WindowInit::loginMenuInit() {
     while (window.isOpen()) {
         sf::Event event;
@@ -138,7 +140,6 @@ void WindowInit::loginMenuInit() {
         window.draw(menuBackground); // przesunac na lepszy
         window.draw(dimRect);
         window.draw(bgRect);
-
         window.display();
     }
 }
