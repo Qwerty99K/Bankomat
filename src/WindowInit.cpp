@@ -3,8 +3,13 @@
 #include "../include/WindowInit.h"
 #include <iostream>
 #include <stdexcept>
+#include <vector>
+
 
 WindowInit::WindowInit() : window(sf::VideoMode(WIDTH, HEIGHT), MAIN_NAME) {
+    const sf::Vector2f bgRectSize(BGRECT_WIDTH, BGRECT_HEIGHT);
+    const sf::Vector2f buttonSizes(BGRECT_WIDTH / 2, BUTTON_HEIGHT);
+
     window.setVerticalSyncEnabled(true);
 
     if (!menuBGTexture.loadFromFile(BG_PATH)) {
@@ -21,7 +26,6 @@ WindowInit::WindowInit() : window(sf::VideoMode(WIDTH, HEIGHT), MAIN_NAME) {
     bankIco.setTexture(bankIcoTexture);
     bankIco.setScale(BANK_SCALE, BANK_SCALE);
     bankIco.setPosition(sf::Vector2f(BANK_POS, BANK_POS)); // absolute position
-
     bankIcoSz = bankIcoTexture.getSize();
 
     if (!menuFont.loadFromFile(FONT_PATH)) {
@@ -29,50 +33,53 @@ WindowInit::WindowInit() : window(sf::VideoMode(WIDTH, HEIGHT), MAIN_NAME) {
     }
     bankName.setFont(menuFont);
     bankName.setString(BANK_NAME);
-    bankName.setCharacterSize(30);
+    bankName.setCharacterSize(FONT_SIZE);
     bankName.setFillColor(sf::Color::Red);
-    bankName.setPosition(BANK_POS + (bankIcoSz.x * BANK_SCALE) / 2 + X_NAME_POS, BANK_POS + (bankIcoSz.y * BANK_SCALE) / 2);
+    bankName.setPosition(BANK_POS + (bankIcoSz.x * BANK_SCALE) / 2 + X_NAME_POS, BANK_POS + (bankIcoSz.y * BANK_SCALE) / 2 - FONT_SIZE / 2);
 
     dimRect.setSize(sf::Vector2f(WIDTH, HEIGHT));
     dimRect.setFillColor(sf::Color(0, 0, 0, 150)); // Semi-transparent black
 
     // Create text for options
     logText.setFont(menuFont);
-    logText.setString("Zaloguj sie");
-    logText.setCharacterSize(30);
+    logText.setString("Logowanie");
+    logText.setCharacterSize(FONT_SIZE);
 
     regText.setFont(menuFont);
     regText.setString("Rejestracja");
-    regText.setCharacterSize(30);
+    regText.setCharacterSize(FONT_SIZE);
 
     exitText.setFont(menuFont);
-    exitText.setString("Wyjdz");
-    exitText.setCharacterSize(30);
+    exitText.setString("Wyjscie");
+    exitText.setCharacterSize(FONT_SIZE);
 
     // Set position for options
-    scrPosition = sf::Vector2f(WIDTH / 2 - 75, HEIGHT / 2);
-
+    scrPosition = sf::Vector2f(WIDTH / 2, HEIGHT / 2);
+    sf::Vector2f relativePos(scrPosition.x - bgRectSize.x / 2, scrPosition.y - bgRectSize.y / 2);
     // Set positions
-    bgButton.setSize(sf::Vector2f(400, 300));
-    bgButton.setFillColor(sf::Color(253, 233, 236, 150)); // White with 150 alpha (semi-transparent)
-    bgButton.setPosition(scrPosition);
+    bgRect.setSize(bgRectSize);
+    bgRect.setFillColor(sf::Color(253, 233, 236, 120)); // White with 150 alpha (semi-transparent)
+    bgRect.setPosition(relativePos);
+    
+    // dac for loop / uproscic jakos koncowo
+    relativePos.y += 50;
+    relativePos.x += buttonSizes.x / 2;
+    logButton.setSize(buttonSizes);
+    logButton.setFillColor(sf::Color(253, 233, 236, 100));
+    logButton.setPosition(relativePos);
+    logText.setPosition(relativePos);
 
-    logButton.setSize(sf::Vector2f(225, 75));
-    logButton.setFillColor(sf::Color::Green);
-    logButton.setPosition(scrPosition);
-    logText.setPosition(scrPosition);
+    relativePos.y += 75 + buttonSizes.y;
+    regButton.setSize(buttonSizes);
+    regButton.setFillColor(sf::Color(253, 233, 236, 100));
+    regButton.setPosition(relativePos);
+    regText.setPosition(relativePos);
 
-    scrPosition.y += 100;
-    regButton.setSize(sf::Vector2f(200, 50));
-    regButton.setFillColor(sf::Color::Blue);
-    regButton.setPosition(scrPosition);
-    regText.setPosition(scrPosition);
-
-    scrPosition.y += 100;
-    exitButton.setSize(sf::Vector2f(200, 50));
-    exitButton.setFillColor(sf::Color::Red);
-    exitButton.setPosition(scrPosition);
-    exitText.setPosition(scrPosition);
+    relativePos.y += 75 + buttonSizes.y;
+    exitButton.setSize(buttonSizes);
+    exitButton.setFillColor(sf::Color(253, 233, 236, 100));
+    exitButton.setPosition(relativePos);
+    exitText.setPosition(relativePos);
 }
 
 void WindowInit::menuInit() {
@@ -106,7 +113,7 @@ void WindowInit::menuInit() {
         window.draw(bankIco);
         window.draw(bankName);
 
-        window.draw(bgButton);
+        window.draw(bgRect);
         window.draw(logButton);
         window.draw(logText);
 
@@ -127,6 +134,11 @@ void WindowInit::loginMenuInit() {
                 window.close();
             }
         }
+        window.clear(sf::Color::White);
+        window.draw(menuBackground); // przesunac na lepszy
+        window.draw(dimRect);
+        window.draw(bgRect);
+
         window.display();
     }
 }
