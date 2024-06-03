@@ -3,10 +3,11 @@
 #include "../include/SeniorAccount.h"
 #include "../tests/importTests.h"
 #include "../include/sqlite_use.h"
-#include "../include/mainMenu.h"
+#include "../include/WindowInit.h"
 
 int main() {
-	initInterface(1280, 720);
+	WindowInit* menu = new WindowInit();
+	menu->menuInit();
 	return 0;
 }
 

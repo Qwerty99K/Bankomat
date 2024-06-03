@@ -156,7 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ChildAccount.cpp" />
-    <ClCompile Include="src\mainMenu.cpp" />
+    <ClCompile Include="src\WindowInit.cpp" />
     <ClCompile Include="src\SeniorAccount.cpp" />
     <ClCompile Include="app\Bankomat.cpp" />
     <ClCompile Include="src\StandardAccount.cpp" />
@@ -174,7 +174,7 @@
   <ItemGroup>
     <ClInclude Include="include\ChildAccount.h" />
     <ClInclude Include="include\Status.h" />
-    <ClInclude Include="include\mainMenu.h" />
+    <ClInclude Include="include\WindowInit.h" />
     <ClInclude Include="include\sqlite_use.h" />
     <ClInclude Include="include\StandardAccount.h" />
     <ClInclude Include="include\SeniorAccount.h" />

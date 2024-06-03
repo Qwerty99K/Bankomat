@@ -36,7 +36,7 @@
     <ClCompile Include="src\ChildAccount.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mainMenu.cpp">
+    <ClCompile Include="src\WindowInit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -75,7 +75,7 @@
     <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3ext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mainMenu.h">
+    <ClInclude Include="include\WindowInit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
