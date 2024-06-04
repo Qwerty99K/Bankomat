@@ -9,7 +9,6 @@
 WindowInit::WindowInit() : window(sf::VideoMode(WIDTH, HEIGHT), MAIN_NAME) {
     const sf::Vector2f bgRectSize(BGRECT_WIDTH, BGRECT_HEIGHT);
     const sf::Vector2f buttonSizes(BGRECT_WIDTH / 2, BUTTON_HEIGHT);
-
     window.setVerticalSyncEnabled(true);
 
     if (!menuBGTexture.loadFromFile(BG_PATH)) {
@@ -40,48 +39,85 @@ WindowInit::WindowInit() : window(sf::VideoMode(WIDTH, HEIGHT), MAIN_NAME) {
     dimRect.setSize(sf::Vector2f(WIDTH, HEIGHT));
     dimRect.setFillColor(sf::Color(0, 0, 0, 150)); // Semi-transparent black
 
+    regRect.setFillColor(sf::Color::White);
+    regRect.setSize(sf::Vector2f(WIDTH - 400, HEIGHT - 200));
+    regRect.setPosition(200, 100); // polowa przesuniec
+
     // Create text for options
     logText.setFont(menuFont);
-    logText.setString("Logowanie");
+    logText.setString("Login");
     logText.setCharacterSize(FONT_SIZE);
+    logText.setFillColor(sf::Color::Black);
 
     regText.setFont(menuFont);
-    regText.setString("Rejestracja");
+    regText.setString("Register");
     regText.setCharacterSize(FONT_SIZE);
+    regText.setFillColor(sf::Color::Black);
 
     exitText.setFont(menuFont);
-    exitText.setString("Wyjscie");
+    exitText.setString("Exit");
     exitText.setCharacterSize(FONT_SIZE);
+    exitText.setFillColor(sf::Color::Black);
+
+    passText.setFont(menuFont);
+    passText.setString("Password");
+    passText.setCharacterSize(FONT_SIZE);
+    passText.setFillColor(sf::Color::Black);
 
     // Set position for options
     scrPosition = sf::Vector2f(WIDTH / 2, HEIGHT / 2);
     sf::Vector2f relativePos(scrPosition.x - bgRectSize.x / 2, scrPosition.y - bgRectSize.y / 2);
     // Set positions
-    bgRect.setSize(bgRectSize);
-    bgRect.setFillColor(sf::Color(253, 233, 236, 120)); // White with 150 alpha (semi-transparent)
-    bgRect.setPosition(relativePos);
+    logRect.setSize(bgRectSize);
+    logRect.setFillColor(sf::Color::White); // White with 150 alpha (semi-transparent)
+    logRect.setPosition(relativePos);
     
     // dac for loop / uproscic jakos koncowo
+    // lepiej skopiowac te same parametry, prostsze.
+    // stworzyc to niezalezne od siebie
     relativePos.y += 50;
     relativePos.x += buttonSizes.x / 2;
     logButton.setSize(buttonSizes);
-    logButton.setFillColor(sf::Color(253, 233, 236, 100));
+    logButton.setFillColor(sf::Color::White);
+    logButton.setOutlineThickness(1);
+    logButton.setOutlineColor(sf::Color::Black);
     logButton.setPosition(relativePos);
+    // relativePos.y += 25;
     logText.setPosition(relativePos);
 
-    relativePos.y += 75 + buttonSizes.y;
+    relativePos.y += 50 + buttonSizes.y;
     regButton.setSize(buttonSizes);
-    regButton.setFillColor(sf::Color(253, 233, 236, 100));
+    regButton.setFillColor(sf::Color::White);
+    regButton.setOutlineThickness(1);
+    regButton.setOutlineColor(sf::Color::Black);
     regButton.setPosition(relativePos);
     regText.setPosition(relativePos);
 
-    relativePos.y += 75 + buttonSizes.y;
+    relativePos.y += 50 + buttonSizes.y;
     exitButton.setSize(buttonSizes);
-    exitButton.setFillColor(sf::Color(253, 233, 236, 100));
+    exitButton.setOutlineThickness(1);
+    exitButton.setOutlineColor(sf::Color::Black);
+    exitButton.setFillColor(sf::Color::White);
     exitButton.setPosition(relativePos);
     exitText.setPosition(relativePos);
+
+
+    sf::Vector2u logRectPos(logRect.getPosition());
+    loginBox.setSize(buttonSizes);
+    loginBox.setFillColor(sf::Color::White);
+    loginBox.setOutlineThickness(1);
+    loginBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 50);
+    loginBox.setOutlineColor(sf::Color::Black);
+
+    passwordBox.setSize(buttonSizes);
+    passwordBox.setFillColor(sf::Color::White);
+    passwordBox.setOutlineThickness(1);
+    passwordBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 175);
+    passwordBox.setOutlineColor(sf::Color::Black);
+
 }
 
+// wrzucic set positions tu
 void WindowInit::menuInit() {
     while (window.isOpen()) {
         sf::Event event;
@@ -98,6 +134,7 @@ void WindowInit::menuInit() {
                     loginMenuInit();
                 }
                 else if (regText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    regMenuInit();
                     std::cout << "REGISTER clicked!" << std::endl;
                 }
                 else if (exitText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
@@ -113,7 +150,7 @@ void WindowInit::menuInit() {
         window.draw(bankIco);
         window.draw(bankName);
 
-        window.draw(bgRect);
+        window.draw(logRect);
         window.draw(logButton);
         window.draw(logText);
 
@@ -129,6 +166,9 @@ void WindowInit::menuInit() {
 // dodac loading ??
 
 void WindowInit::loginMenuInit() {
+    window.clear(sf::Color::White);
+    /*loginBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 50);
+    registerBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 50);*/
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -136,10 +176,29 @@ void WindowInit::loginMenuInit() {
                 window.close();
             }
         }
-        window.clear(sf::Color::White);
         window.draw(menuBackground); // przesunac na lepszy
         window.draw(dimRect);
-        window.draw(bgRect);
+        window.draw(logRect);
+        window.draw(loginBox);
+        window.draw(passwordBox);
+        window.display();
+    }
+}
+
+void WindowInit::regMenuInit() {
+    window.clear(sf::Color::White);
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+        }
+        window.draw(menuBackground); // przesunac na lepszy
+        window.draw(dimRect);
+        window.draw(regRect);
+
+
         window.display();
     }
 }

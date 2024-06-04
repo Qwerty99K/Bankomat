@@ -19,18 +19,19 @@
 #define HEIGHT 720
 
 #define BUTTON_WIDTH 200
-#define BUTTON_HEIGHT 100
+#define BUTTON_HEIGHT 50
 
-#define BGRECT_WIDTH 375
-#define BGRECT_HEIGHT 550
+#define BGRECT_WIDTH 300
+#define BGRECT_HEIGHT 350
 
-#define FONT_SIZE 35
+#define FONT_SIZE 30
 
 class WindowInit {
 public:
     WindowInit();
     void menuInit();
     void loginMenuInit();
+    void regMenuInit();
 
 private:
     sf::RenderWindow window;
@@ -47,12 +48,17 @@ private:
     sf::Text logText;
     sf::Text regText;
     sf::Text exitText;
+    sf::Text passText;
 
     sf::Vector2f scrPosition; // the mid points of screen
     sf::Vector2f buttonSizes;
-    sf::RectangleShape bgRect;
+    sf::RectangleShape logRect;
     sf::RectangleShape dimRect;
     sf::RectangleShape logButton;
     sf::RectangleShape regButton;
     sf::RectangleShape exitButton;
+    sf::RectangleShape regRect;
+
+    sf::RectangleShape loginBox;
+    sf::RectangleShape passwordBox;
 };
