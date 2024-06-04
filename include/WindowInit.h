@@ -26,8 +26,7 @@
 
 #define FONT_SIZE 30
 
-#ifndef WINDOW_INIT_H
-#define WINDOW_INIT_H
+#define REG_GAPS 20
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -67,6 +66,10 @@ private:
     sf::RectangleShape loginBox;
     sf::RectangleShape passwordBox;
 
+    sf::RectangleShape CAccOptionRect;
+    sf::RectangleShape StAccOptionRect;
+    sf::RectangleShape SeAccOptionRect;
+
     // Initialize functions
     void TexturesInit();
     void FontsInit();
@@ -88,5 +91,4 @@ private:
     void regMenuInit();
 };
 
-#endif // WINDOW_INIT_H
 

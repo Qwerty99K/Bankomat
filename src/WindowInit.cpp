@@ -42,13 +42,27 @@ void WindowInit::ShapesInit() {
     dimRect.setFillColor(sf::Color(0, 0, 0, 150));
 
     regRect.setFillColor(sf::Color::White);
-    regRect.setSize(sf::Vector2f(WIDTH - 400, HEIGHT - 200));
+    regRect.setSize(sf::Vector2f(WIDTH - 200, HEIGHT - 200));
 
     logRect.setSize(sf::Vector2f(BGRECT_WIDTH, BGRECT_HEIGHT));
     logRect.setFillColor(sf::Color::White);
 
-    sf::Vector2f buttonSizes(BGRECT_WIDTH / 2, BUTTON_HEIGHT);
+    CAccOptionRect.setSize(sf::Vector2f((WIDTH - 200) / 3 - 20, HEIGHT - 220));
+    StAccOptionRect.setSize(sf::Vector2f((WIDTH - 200) / 3 - 20, HEIGHT - 220));
+    SeAccOptionRect.setSize(sf::Vector2f((WIDTH - 200) / 3 - 20, HEIGHT - 220));
 
+    CAccOptionRect.setFillColor(sf::Color::White);
+    StAccOptionRect.setFillColor(sf::Color::White);
+    SeAccOptionRect.setFillColor(sf::Color::White);
+
+    CAccOptionRect.setOutlineThickness(1);
+    CAccOptionRect.setOutlineColor(sf::Color::Black);
+    StAccOptionRect.setOutlineThickness(1);
+    StAccOptionRect.setOutlineColor(sf::Color::Black);
+    SeAccOptionRect.setOutlineThickness(1);
+    SeAccOptionRect.setOutlineColor(sf::Color::Black);
+
+    sf::Vector2f buttonSizes(BGRECT_WIDTH / 2, BUTTON_HEIGHT);
     ButtonInit(logButton, buttonSizes);
     ButtonInit(regButton, buttonSizes);
     ButtonInit(exitButton, buttonSizes);
@@ -88,7 +102,7 @@ void WindowInit::setMenuPos() {
 
     bankIco.setPosition(sf::Vector2f(BANK_POS, BANK_POS));
     bankName.setPosition(BANK_POS + (bankIcoSz.x * BANK_SCALE) / 2 + X_NAME_POS, BANK_POS + (bankIcoSz.y * BANK_SCALE) / 2 - FONT_SIZE / 2);
-    regRect.setPosition(200, 100);
+    regRect.setPosition(100, 100);
     logRect.setPosition(logRectPos);
 
     relativePos.y += 50;
@@ -106,6 +120,13 @@ void WindowInit::setMenuPos() {
 
     loginBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 50);
     passwordBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 175);
+
+    auto temp = regRect.getPosition();
+    temp.y += 10;
+    temp.x += 10;
+    CAccOptionRect.setPosition(temp.x, temp.y); // (100, 100)
+    StAccOptionRect.setPosition(temp.x + 360, temp.y); // (460, 100)
+    SeAccOptionRect.setPosition(temp.x + 720, temp.y); // (
 }
 
 void WindowInit::menuInit() {
@@ -139,7 +160,6 @@ void WindowInit::menuInit() {
     }
 }
 
-
 void WindowInit::drawMainMenu() {
     window.draw(menuBackground);
     window.draw(dimRect);
@@ -158,30 +178,46 @@ void WindowInit::loginMenuInit() {
     logText.setPosition(loginBox.getPosition().x, loginBox.getPosition().y - FONT_SIZE - 6);
     passText.setPosition(passwordBox.getPosition().x, passwordBox.getPosition().y - FONT_SIZE - 6);
 
-    std::string inputText{ "" };
+    std::string loginInput{ "" };
+    std::string passwordInput{ "" };
     sf::Text login;
     sf::Text password;
     SetText(login, "", sf::Color::Black);
     SetText(password, "", sf::Color::Black);
-
+    // nie dziala chujstwo
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            switch (event.type) {
+            case sf::Event::Closed:
                 window.close();
-            }
-            else if (event.type == sf::Event::TextEntered) {
-                if (event.text.unicode < 128 && event.text.unicode != 8) {
-                    inputText += static_cast<char>(event.text.unicode);
+                break;
+            case sf::Event::MouseButtonPressed:
+                if (logText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
+                        loginInput += static_cast<char>(event.text.unicode);
+                        login.setString(loginInput);
+                        std::cout << loginInput;
+                    }
+                    else if (event.text.unicode == 8 && !loginInput.empty()) {
+                        loginInput.pop_back();
+                        login.setString(loginInput); // Update the text after deletion
+                    }
                 }
-                else if (event.text.unicode == 8 && !inputText.empty()) {
-                    inputText.pop_back();
+                else if (passText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
+                        passwordInput += static_cast<char>(event.text.unicode);
+                        password.setString(passwordInput); // Corrected variable used here
+                        std::cout << passwordInput;
+                    }
+                    else if (event.text.unicode == 8 && !passwordInput.empty()) {
+                        passwordInput.pop_back();
+                        password.setString(passwordInput); // Update the text after deletion
+                    }
                 }
             }
         }
-
-        login.setString(inputText);
-        std::cout << inputText;
         window.draw(login);
         window.clear(sf::Color::White);
         window.draw(menuBackground);
@@ -223,4 +259,7 @@ void WindowInit::drawRegMenu() {
     window.draw(menuBackground);
     window.draw(dimRect);
     window.draw(regRect);
+    window.draw(StAccOptionRect);
+    window.draw(CAccOptionRect);
+    window.draw(SeAccOptionRect);
 }
