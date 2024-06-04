@@ -112,7 +112,26 @@ void WindowInit::menuInit() {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            handleEvent(event);
+            switch (event.type) {
+            case sf::Event::Closed:
+                window.close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                if (logText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    std::cout << "LOGIN clicked!" << std::endl;
+                    loginMenuInit();
+                }
+                else if (regText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    regMenuInit();
+                    std::cout << "REGISTER clicked!" << std::endl;
+                }
+                else if (exitText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    window.close();
+                }
+                break;
+            }
         }
         window.clear(sf::Color::White);
         drawMainMenu();
@@ -120,35 +139,6 @@ void WindowInit::menuInit() {
     }
 }
 
-void WindowInit::handleEvent(sf::Event& event) {
-    switch (event.type) {
-    case sf::Event::Closed:
-        window.close();
-        break;
-
-    case sf::Event::MouseButtonPressed:
-        handleMouseClick();
-        break;
-
-    default:
-        break;
-    }
-}
-
-void WindowInit::handleMouseClick() {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    if (logText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-        std::cout << "LOGIN clicked!" << std::endl;
-        loginMenuInit();
-    }
-    else if (regText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-        std::cout << "REGISTER clicked!" << std::endl;
-        regMenuInit();
-    }
-    else if (exitText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-        window.close();
-    }
-}
 
 void WindowInit::drawMainMenu() {
     window.draw(menuBackground);
@@ -167,7 +157,6 @@ void WindowInit::drawMainMenu() {
 void WindowInit::loginMenuInit() {
     logText.setPosition(loginBox.getPosition().x, loginBox.getPosition().y - FONT_SIZE - 6);
     passText.setPosition(passwordBox.getPosition().x, passwordBox.getPosition().y - FONT_SIZE - 6);
-
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -175,8 +164,15 @@ void WindowInit::loginMenuInit() {
                 window.close();
             }
         }
+
         window.clear(sf::Color::White);
-        drawLoginMenu();
+        window.draw(menuBackground);
+        window.draw(dimRect);
+        window.draw(logRect);
+        window.draw(loginBox);
+        window.draw(logText);
+        window.draw(passwordBox);
+        window.draw(passText);
         window.display();
     }
 }

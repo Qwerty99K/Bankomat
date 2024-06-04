@@ -78,10 +78,6 @@ private:
     // Position setting function
     void setMenuPos();
 
-    // Event handling
-    void handleEvent(sf::Event& event);
-    void handleMouseClick();
-
     // Menu drawing
     void drawMainMenu();
     void drawLoginMenu();
