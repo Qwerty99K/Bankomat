@@ -26,39 +26,71 @@
 
 #define FONT_SIZE 30
 
+#ifndef WINDOW_INIT_H
+#define WINDOW_INIT_H
+
+#include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
+
 class WindowInit {
 public:
     WindowInit();
+
+    // Initializes the main menu loop
     void menuInit();
-    void loginMenuInit();
-    void regMenuInit();
 
 private:
     sf::RenderWindow window;
-    sf::Sprite menuBackground; // bg
-    sf::Texture menuBGTexture; // tbg
 
+    // Textures and Sprites
+    sf::Texture menuBGTexture;
+    sf::Sprite menuBackground;
+    sf::Texture bankIcoTexture;
     sf::Sprite bankIco;
     sf::Vector2u bankIcoSz;
-    sf::Texture bankIcoTexture;
 
+    // Font and Text
     sf::Font menuFont;
     sf::Text bankName;
-
     sf::Text logText;
     sf::Text regText;
     sf::Text exitText;
     sf::Text passText;
 
-    sf::Vector2f scrPosition; // the mid points of screen
-    sf::Vector2f buttonSizes;
-    sf::RectangleShape logRect;
+    // Shapes
     sf::RectangleShape dimRect;
+    sf::RectangleShape regRect;
+    sf::RectangleShape logRect;
     sf::RectangleShape logButton;
     sf::RectangleShape regButton;
     sf::RectangleShape exitButton;
-    sf::RectangleShape regRect;
-
     sf::RectangleShape loginBox;
     sf::RectangleShape passwordBox;
+
+    // Initialize functions
+    void TexturesInit();
+    void FontsInit();
+    void ShapesInit();
+    void TextInit();
+    void ButtonInit(sf::RectangleShape& button, const sf::Vector2f& size);
+    void SetText(sf::Text& text, const std::string& str, sf::Color color);
+
+    // Position setting function
+    void setMenuPos();
+
+    // Event handling
+    void handleEvent(sf::Event& event);
+    void handleMouseClick();
+
+    // Menu drawing
+    void drawMainMenu();
+    void drawLoginMenu();
+    void drawRegMenu();
+
+    // Additional menu initializers
+    void loginMenuInit();
+    void regMenuInit();
 };
+
+#endif // WINDOW_INIT_H
+
