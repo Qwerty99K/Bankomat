@@ -157,14 +157,32 @@ void WindowInit::drawMainMenu() {
 void WindowInit::loginMenuInit() {
     logText.setPosition(loginBox.getPosition().x, loginBox.getPosition().y - FONT_SIZE - 6);
     passText.setPosition(passwordBox.getPosition().x, passwordBox.getPosition().y - FONT_SIZE - 6);
+
+    std::string inputText{ "" };
+    sf::Text login;
+    sf::Text password;
+    SetText(login, "", sf::Color::Black);
+    SetText(password, "", sf::Color::Black);
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+            else if (event.type == sf::Event::TextEntered) {
+                if (event.text.unicode < 128 && event.text.unicode != 8) {
+                    inputText += static_cast<char>(event.text.unicode);
+                }
+                else if (event.text.unicode == 8 && !inputText.empty()) {
+                    inputText.pop_back();
+                }
+            }
         }
 
+        login.setString(inputText);
+        std::cout << inputText;
+        window.draw(login);
         window.clear(sf::Color::White);
         window.draw(menuBackground);
         window.draw(dimRect);
