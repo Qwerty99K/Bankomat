@@ -114,3 +114,5 @@ private:
 };
 
 
+// stworzyc potem z window init kilka klas, rodzielic to wszystko na prostsze klasy.
+// niektore rzeczy nie musza byc inicjalizowane od razu, oszczedzi pamieci

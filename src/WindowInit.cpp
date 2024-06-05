@@ -140,6 +140,8 @@ void WindowInit::setMenuPos() {
     stAccText.setPosition(150, 400);
     CAccIcon.setPosition(545, 200); // + 360 do x dla seniora
     cAccText.setPosition(515, 400);
+    // here icon
+    seAccText.setPosition(875, 400);
 
     relativePos.y += 50;
     relativePos.x += buttonSizes.x / 2;
@@ -277,15 +279,7 @@ void WindowInit::loginMenuInit() {
                 break;
             }
         }
-
-        window.clear(sf::Color::White);
-        window.draw(menuBackground);
-        window.draw(dimRect);
-        window.draw(logRect);
-        window.draw(loginBox);
-        window.draw(logText);
-        window.draw(passwordBox);
-        window.draw(passText);
+        drawLoginMenu();
         window.draw(login);    // Draw the login text
         window.draw(password); // Draw the password text
         window.display();
@@ -293,6 +287,7 @@ void WindowInit::loginMenuInit() {
 }
 
 void WindowInit::drawLoginMenu() {
+    window.clear(sf::Color::White);
     window.draw(menuBackground);
     window.draw(dimRect);
     window.draw(logRect);
@@ -319,7 +314,7 @@ void WindowInit::regMenuInit() {
 void WindowInit::drawRegMenu() {
     window.draw(menuBackground);
     window.draw(dimRect);
-    window.draw(regRect);
+    //window.draw(regRect);
     window.draw(StAccOptionRect);
     window.draw(CAccOptionRect);
     window.draw(SeAccOptionRect);
@@ -327,5 +322,8 @@ void WindowInit::drawRegMenu() {
     window.draw(stAccText);
     window.draw(CAccIcon);
     window.draw(cAccText);
+    // here icon
+    window.draw(seAccText);
+
 
 }
