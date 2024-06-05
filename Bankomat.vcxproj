@@ -155,19 +155,45 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Person.cpp" />
-    <ClCompile Include="src\Bankomat.cpp" />
+    <ClCompile Include="src\ChildAccount.cpp" />
+    <ClCompile Include="src\WindowInit.cpp" />
+    <ClCompile Include="src\SeniorAccount.cpp" />
+    <ClCompile Include="app\Bankomat.cpp" />
+    <ClCompile Include="src\StandardAccount.cpp" />
     <ClCompile Include="src\sqlite3.c" />
     <ClCompile Include="src\sqlite_use.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\Person.h" />
+    <ClCompile Include="tests\assert_values.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="packages.config" />
     <None Include="README.md" />
+    <None Include="resources\USERS_DATABASE.db" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\ChildAccount.h" />
+    <ClInclude Include="include\Status.h" />
+    <ClInclude Include="include\WindowInit.h" />
+    <ClInclude Include="include\sqlite_use.h" />
+    <ClInclude Include="include\StandardAccount.h" />
+    <ClInclude Include="include\SeniorAccount.h" />
+    <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3.h" />
+    <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3ext.h" />
+    <ClInclude Include="tests\assert_values.h" />
+    <ClInclude Include="tests\importTests.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\background.jpg" />
+    <Image Include="resources\textures\bank.png" />
+    <Image Include="resources\textures\ChildAccText.jpg" />
+    <Image Include="resources\textures\login_icon.jpg" />
+    <Image Include="resources\textures\register_icon.jpg" />
+    <Image Include="resources\textures\StandardAccText.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\NerdFont.ttf" />
+    <Font Include="resources\PtRoot.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
