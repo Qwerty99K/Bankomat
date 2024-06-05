@@ -179,14 +179,15 @@ void WindowInit::menuInit() {
             case sf::Event::MouseButtonPressed:
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 if (logText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    std::cout << "LOGIN clicked!" << std::endl;
+                    std::cout << "[DEBUG] Login selected" << std::endl;
                     loginMenuInit();
                 }
                 else if (regText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     regMenuInit();
-                    std::cout << "REGISTER clicked!" << std::endl;
+                    std::cout << "[DEBUG] Register selected" << std::endl;
                 }
                 else if (exitText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    std::cout << "[DEBUG] App closed" << std::endl;
                     window.close();
                 }
                 break;
@@ -302,8 +303,24 @@ void WindowInit::regMenuInit() {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+            switch (event.type) {
+            case sf::Event::Closed:
                 window.close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                if (StAccOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    createAccount();
+                    std::cout << "[DEBUG] Standard Account selected" << std::endl;
+                }
+                else if (CAccOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    std::cout << "[DEBUG] Child Account selected" << std::endl;
+                }
+                else if (SeAccOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    std::cout << "[DEBUG] Senior Account selected" << std::endl;
+                }
+                break;
             }
         }
         drawRegMenu();
@@ -322,8 +339,282 @@ void WindowInit::drawRegMenu() {
     window.draw(stAccText);
     window.draw(CAccIcon);
     window.draw(cAccText);
-    // here icon
+    // here senior icon
     window.draw(seAccText);
 
 
 }
+
+
+void WindowInit::createAccount() {
+
+    // Variables to keep track of which input box is active
+    bool isLoginActive = false;
+    bool isPasswordActive = false;
+    bool isNameActive = false;
+    bool isLastNameActive = false;
+    bool isAddressActive = false;
+    bool isAgeActive = false;
+
+    // Create input boxes and labels
+    sf::RectangleShape nameBox(sf::Vector2f(200, 30));
+    sf::RectangleShape lastNameBox(sf::Vector2f(200, 30));
+    sf::RectangleShape addressBox(sf::Vector2f(200, 30));
+    sf::RectangleShape ageBox(sf::Vector2f(200, 30));
+    sf::RectangleShape loginBox(sf::Vector2f(200, 30));
+    sf::RectangleShape passwordBox(sf::Vector2f(200, 30));
+
+    // Set outlines
+    nameBox.setOutlineThickness(2);
+    nameBox.setOutlineColor(sf::Color::Black);
+    lastNameBox.setOutlineThickness(2);
+    lastNameBox.setOutlineColor(sf::Color::Black);
+    addressBox.setOutlineThickness(2);
+    addressBox.setOutlineColor(sf::Color::Black);
+    ageBox.setOutlineThickness(2);
+    ageBox.setOutlineColor(sf::Color::Black);
+    loginBox.setOutlineThickness(2);
+    loginBox.setOutlineColor(sf::Color::Black);
+    passwordBox.setOutlineThickness(2);
+    passwordBox.setOutlineColor(sf::Color::Black);
+
+    // Create labels for the boxes
+    sf::Text nameText;
+    sf::Text lastNameText;
+    sf::Text addressText;
+    sf::Text ageText;
+    sf::Text loginText;
+    sf::Text passwordText;
+
+    // Set initial properties for the labels
+    SetText(nameText, "Imie:", sf::Color::Black);
+    SetText(lastNameText, "Nazwisko:", sf::Color::Black);
+    SetText(addressText, "Adres:", sf::Color::Black);
+    SetText(ageText, "Wiek:", sf::Color::Black);
+    SetText(loginText, "Login:", sf::Color::Black);
+    SetText(passwordText, "Haslo:", sf::Color::Black);
+
+    // Position the boxes relative to the regRect
+    sf::Vector2f basePosition = regRect.getPosition() + sf::Vector2f(80, 80);
+    float spacing = 60; // Vertical spacing between elements
+    float xShift = 180; // Horizontal offset for labels relative to the text boxes
+
+    // Position the labels and boxes
+    nameText.setPosition(basePosition);
+    nameBox.setPosition(nameText.getPosition().x + xShift, nameText.getPosition().y);
+
+    lastNameText.setPosition(basePosition.x, basePosition.y + spacing);
+    lastNameBox.setPosition(lastNameText.getPosition().x + xShift, lastNameText.getPosition().y);
+
+    addressText.setPosition(basePosition.x, basePosition.y + 2 * spacing);
+    addressBox.setPosition(addressText.getPosition().x + xShift, addressText.getPosition().y);
+
+    ageText.setPosition(basePosition.x, basePosition.y + 3 * spacing);
+    ageBox.setPosition(ageText.getPosition().x + xShift, ageText.getPosition().y);
+
+    loginText.setPosition(basePosition.x, basePosition.y + 4 * spacing);
+    loginBox.setPosition(loginText.getPosition().x + xShift, loginText.getPosition().y);
+
+    passwordText.setPosition(basePosition.x, basePosition.y + 5 * spacing);
+    passwordBox.setPosition(passwordText.getPosition().x + xShift, passwordText.getPosition().y);
+
+    // Variables to store user input
+    std::string nameInput{ "" };
+    std::string lastNameInput{ "" };
+    std::string addressInput{ "" };
+    std::string ageInput{ "" };
+    std::string loginInput{ "" };
+    std::string passwordInput{ "" };
+
+    // Create SFML Text objects for displaying user input
+    sf::Text name;
+    sf::Text lastName;
+    sf::Text address;
+    sf::Text age;
+    sf::Text login;
+    sf::Text password;
+
+    // Set initial properties for the SFML Text objects
+    SetText(name, "", sf::Color::Black);
+    SetText(lastName, "", sf::Color::Black);
+    SetText(address, "", sf::Color::Black);
+    SetText(age, "", sf::Color::Black);
+    SetText(login, "", sf::Color::Black);
+    SetText(password, "", sf::Color::Black);
+
+    // Position the SFML Text objects
+    name.setPosition(nameBox.getPosition().x + 5, nameBox.getPosition().y);
+    lastName.setPosition(lastNameBox.getPosition().x + 5, lastNameBox.getPosition().y);
+    address.setPosition(addressBox.getPosition().x + 5, addressBox.getPosition().y);
+    age.setPosition(ageBox.getPosition().x + 5, ageBox.getPosition().y);
+    login.setPosition(loginBox.getPosition().x + 5, loginBox.getPosition().y);
+    password.setPosition(passwordBox.getPosition().x + 5, passwordBox.getPosition().y);
+
+    // Helper function to create a masked string of asterisks
+    auto createAsteriskString = [](const std::string& input) {
+        return std::string(input.size(), '*');
+        };
+
+    // Main event loop
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+            switch (event.type) {
+            case sf::Event::Closed:
+                window.close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                // Check which box is clicked
+                if (nameBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = true;
+                    isLastNameActive = false;
+                    isAddressActive = false;
+                    isAgeActive = false;
+                    isLoginActive = false;
+                    isPasswordActive = false;
+                }
+                else if (lastNameBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = true;
+                    isAddressActive = false;
+                    isAgeActive = false;
+                    isLoginActive = false;
+                    isPasswordActive = false;
+                }
+                else if (addressBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = false;
+                    isAddressActive = true;
+                    isAgeActive = false;
+                    isLoginActive = false;
+                    isPasswordActive = false;
+                }
+                else if (ageBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = false;
+                    isAddressActive = false;
+                    isAgeActive = true;
+                    isLoginActive = false;
+                    isPasswordActive = false;
+                }
+                else if (loginBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = false;
+                    isAddressActive = false;
+                    isAgeActive = false;
+                    isLoginActive = true;
+                    isPasswordActive = false;
+                }
+                else if (passwordBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = false;
+                    isAddressActive = false;
+                    isAgeActive = false;
+                    isLoginActive = false;
+                    isPasswordActive = true;
+                }
+                break;
+
+            case sf::Event::TextEntered:
+                if (isNameActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                        nameInput += static_cast<char>(event.text.unicode);
+                        name.setString(nameInput);
+                        std::cout << nameInput;
+                    }
+                    else if (event.text.unicode == 8 && !nameInput.empty()) { // If it's a backspace
+                        nameInput.pop_back();
+                        name.setString(nameInput);
+                    }
+                }
+                else if (isLastNameActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                        lastNameInput += static_cast<char>(event.text.unicode);
+                        lastName.setString(lastNameInput);
+                        std::cout << lastNameInput;
+                    }
+                    else if (event.text.unicode == 8 && !lastNameInput.empty()) { // If it's a backspace
+                        lastNameInput.pop_back();
+                        lastName.setString(lastNameInput);
+                    }
+                }
+                else if (isAddressActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                        addressInput += static_cast<char>(event.text.unicode);
+                        address.setString(addressInput);
+                        std::cout << addressInput;
+                    }
+                    else if (event.text.unicode == 8 && !addressInput.empty()) { // If it's a backspace
+                        addressInput.pop_back();
+                        address.setString(addressInput);
+                    }
+                }
+                else if (isAgeActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                        ageInput += static_cast<char>(event.text.unicode);
+                        age.setString(ageInput);
+                        std::cout << ageInput;
+                    }
+                    else if (event.text.unicode == 8 && !ageInput.empty()) { // If it's a backspace
+                        ageInput.pop_back();
+                        age.setString(ageInput);
+                    }
+                }
+                else if (isLoginActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                        loginInput += static_cast<char>(event.text.unicode);
+                        login.setString(loginInput);
+                        std::cout << loginInput;
+                    }
+                    else if (event.text.unicode == 8 && !loginInput.empty()) { // If it's a backspace
+                        loginInput.pop_back();
+                        login.setString(loginInput);
+                    }
+                }
+                else if (isPasswordActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                        passwordInput += static_cast<char>(event.text.unicode);
+                        password.setString(createAsteriskString(passwordInput));
+                        std::cout << passwordInput;
+                    }
+                    else if (event.text.unicode == 8 && !passwordInput.empty()) { // If it's a backspace
+                        passwordInput.pop_back();
+                        password.setString(createAsteriskString(passwordInput));
+                    }
+                }
+                break;
+            }
+        }
+
+        window.clear(sf::Color::White);
+        window.draw(menuBackground);
+        window.draw(dimRect);
+        window.draw(regRect);
+        window.draw(nameBox);
+        window.draw(lastNameBox);
+        window.draw(addressBox);
+        window.draw(ageBox);
+        window.draw(loginBox);
+        window.draw(passwordBox);
+        window.draw(nameText);
+        window.draw(lastNameText);
+        window.draw(addressText);
+        window.draw(ageText);
+        window.draw(loginText);
+        window.draw(passwordText);
+        window.draw(name);     // Draw the name text
+        window.draw(lastName); // Draw the last name text
+        window.draw(address);  // Draw the address text
+        window.draw(age);      // Draw the age text
+        window.draw(login);    // Draw the login text
+        window.draw(password); // Draw the password text
+        window.display();
+    }
+}
+
+
+
+// pozbyc sie tyle ifow i else ifow

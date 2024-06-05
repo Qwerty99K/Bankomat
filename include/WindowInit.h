@@ -111,6 +111,7 @@ private:
     // Additional menu initializers
     void loginMenuInit();
     void regMenuInit();
+    void createAccount();
 };
 
 
