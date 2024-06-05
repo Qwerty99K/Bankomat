@@ -218,6 +218,7 @@ void WindowInit::loginMenuInit() {
     bool isLoginActive = false;
     bool isPasswordActive = false;
 
+
     // Initial setup for positions, etc.
     logText.setPosition(loginBox.getPosition().x, loginBox.getPosition().y - FONT_SIZE - 6);
     passText.setPosition(passwordBox.getPosition().x, passwordBox.getPosition().y - FONT_SIZE - 6);
@@ -230,6 +231,17 @@ void WindowInit::loginMenuInit() {
     SetText(password, "", sf::Color::Black);
     login.setPosition(loginBox.getPosition());
     password.setPosition(passwordBox.getPosition());
+
+    // put it later into class definition
+    sf::Text logIntoAccount;
+    SetText(logIntoAccount, "Zaloguj", sf::Color::Black);
+    sf::RectangleShape logIntoAccountRect;
+    logIntoAccountRect.setSize(loginBox.getSize());
+    logIntoAccountRect.setOutlineColor(sf::Color::Black);
+    logIntoAccountRect.setOutlineThickness(1);
+    logIntoAccountRect.setPosition(passwordBox.getPosition().x, passwordBox.getPosition().y + 75);
+    logIntoAccount.setPosition(logIntoAccountRect.getPosition());
+    // dac do gory troche te elementy ^
 
     while (window.isOpen()) {
         sf::Event event;
@@ -251,6 +263,10 @@ void WindowInit::loginMenuInit() {
                 else if (passwordBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isLoginActive = false;
                     isPasswordActive = true;
+                }
+                else if (logIntoAccountRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    std::cout << "[DEBUG] Initializing logging..." << std::endl;
+                    // pass credentials and see if the account exists
                 }
                 break;
 
@@ -283,6 +299,8 @@ void WindowInit::loginMenuInit() {
         drawLoginMenu();
         window.draw(login);    // Draw the login text
         window.draw(password); // Draw the password text
+        window.draw(logIntoAccountRect);
+        window.draw(logIntoAccount);
         window.display();
     }
 }
@@ -344,7 +362,6 @@ void WindowInit::drawRegMenu() {
 
 
 }
-
 
 void WindowInit::createAccount() {
 
@@ -618,3 +635,4 @@ void WindowInit::createAccount() {
 
 
 // pozbyc sie tyle ifow i else ifow
+// nie trzeba niektorych rzeczy inicjalizowac, mozna wywalic do funkcji
