@@ -186,6 +186,10 @@
   <ItemGroup>
     <Image Include="resources\textures\background.jpg" />
     <Image Include="resources\textures\bank.png" />
+    <Image Include="resources\textures\ChildAccText.jpg" />
+    <Image Include="resources\textures\login_icon.jpg" />
+    <Image Include="resources\textures\register_icon.jpg" />
+    <Image Include="resources\textures\StandardAccText.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\NerdFont.ttf" />

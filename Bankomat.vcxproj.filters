@@ -86,6 +86,18 @@
     <Image Include="resources\textures\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="resources\textures\register_icon.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\login_icon.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\ChildAccText.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\StandardAccText.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\NerdFont.ttf" />

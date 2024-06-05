@@ -25,6 +25,35 @@ void WindowInit::TexturesInit() {
     if (!bankIcoTexture.loadFromFile(BANK_ICO_PATH)) {
         throw std::runtime_error("Cannot load the texture.");
     }
+
+    if (!StAccTexture.loadFromFile("../Bankomat/resources/textures/StandardAccText.jpg")) {
+        throw std::runtime_error("Cannot load the texture.");
+    }
+
+    if (!CAccTexture.loadFromFile("../Bankomat/resources/textures/ChildAccText.jpg")) {
+        throw std::runtime_error("Cannot load the texture.");
+    }
+    // senior uninitialized
+
+    if (!logTexture.loadFromFile("../Bankomat/resources/textures/login_icon.jpg")) {
+        throw std::runtime_error("Cannot load the texture.");
+    }
+
+    if (!regTexture.loadFromFile("../Bankomat/resources/textures/register_icon.jpg")) {
+        throw std::runtime_error("Cannot load the texture.");
+    }
+
+    StAccIcon.setTexture(StAccTexture);
+    CAccIcon.setTexture(CAccTexture);
+    logIcon.setTexture(logTexture);
+    regIcon.setTexture(regTexture);
+
+    StAccIcon.setScale(ST_ACC_SCALE, ST_ACC_SCALE);
+    CAccIcon.setScale(C_ACC_SCALE, C_ACC_SCALE);
+    /*logIcon.setScale(10, 10);
+    regIcon.setScale(10, 10);*/
+
+
     bankIcoTexture.setSmooth(true);
     bankIco.setTexture(bankIcoTexture);
     bankIco.setScale(BANK_SCALE, BANK_SCALE);
@@ -84,6 +113,9 @@ void WindowInit::TextInit() {
     SetText(regText, "Register", sf::Color::Black);
     SetText(exitText, "Exit", sf::Color::Black);
     SetText(passText, "Password", sf::Color::Black);
+    SetText(stAccText, "Konto Standardowe", sf::Color::Black);
+    SetText(cAccText, "Konto dla dziecka", sf::Color::Black);
+    SetText(seAccText, "Konto dla seniora", sf::Color::Black);
 }
 
 void WindowInit::SetText(sf::Text& text, const std::string& str, sf::Color color) {
@@ -104,6 +136,10 @@ void WindowInit::setMenuPos() {
     bankName.setPosition(BANK_POS + (bankIcoSz.x * BANK_SCALE) / 2 + X_NAME_POS, BANK_POS + (bankIcoSz.y * BANK_SCALE) / 2 - FONT_SIZE / 2);
     regRect.setPosition(100, 100);
     logRect.setPosition(logRectPos);
+    StAccIcon.setPosition(185, 200);
+    stAccText.setPosition(150, 400);
+    CAccIcon.setPosition(545, 200); // + 360 do x dla seniora
+    cAccText.setPosition(515, 400);
 
     relativePos.y += 50;
     relativePos.x += buttonSizes.x / 2;
@@ -175,6 +211,11 @@ void WindowInit::drawMainMenu() {
 }
 
 void WindowInit::loginMenuInit() {
+    // Variables to keep track of which input box is active
+    bool isLoginActive = false;
+    bool isPasswordActive = false;
+
+    // Initial setup for positions, etc.
     logText.setPosition(loginBox.getPosition().x, loginBox.getPosition().y - FONT_SIZE - 6);
     passText.setPosition(passwordBox.getPosition().x, passwordBox.getPosition().y - FONT_SIZE - 6);
 
@@ -184,41 +225,59 @@ void WindowInit::loginMenuInit() {
     sf::Text password;
     SetText(login, "", sf::Color::Black);
     SetText(password, "", sf::Color::Black);
-    // nie dziala chujstwo
+    login.setPosition(loginBox.getPosition());
+    password.setPosition(passwordBox.getPosition());
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
             switch (event.type) {
             case sf::Event::Closed:
                 window.close();
                 break;
+
             case sf::Event::MouseButtonPressed:
-                if (logText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) {
+                // Check if the login box is clicked
+                if (loginBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isLoginActive = true;
+                    isPasswordActive = false;
+                }
+                // Check if the password box is clicked
+                else if (passwordBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isLoginActive = false;
+                    isPasswordActive = true;
+                }
+                break;
+
+            case sf::Event::TextEntered:
+                if (isLoginActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         loginInput += static_cast<char>(event.text.unicode);
                         login.setString(loginInput);
                         std::cout << loginInput;
                     }
-                    else if (event.text.unicode == 8 && !loginInput.empty()) {
+                    else if (event.text.unicode == 8 && !loginInput.empty()) { // If it's a backspace
                         loginInput.pop_back();
-                        login.setString(loginInput); // Update the text after deletion
+                        login.setString(loginInput);
                     }
                 }
-                else if (passText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) {
+                else if (isPasswordActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         passwordInput += static_cast<char>(event.text.unicode);
-                        password.setString(passwordInput); // Corrected variable used here
+                        password.setString(passwordInput);
                         std::cout << passwordInput;
                     }
-                    else if (event.text.unicode == 8 && !passwordInput.empty()) {
+                    else if (event.text.unicode == 8 && !passwordInput.empty()) { // If it's a backspace
                         passwordInput.pop_back();
-                        password.setString(passwordInput); // Update the text after deletion
+                        password.setString(passwordInput);
                     }
                 }
+                break;
             }
         }
-        window.draw(login);
+
         window.clear(sf::Color::White);
         window.draw(menuBackground);
         window.draw(dimRect);
@@ -227,6 +286,8 @@ void WindowInit::loginMenuInit() {
         window.draw(logText);
         window.draw(passwordBox);
         window.draw(passText);
+        window.draw(login);    // Draw the login text
+        window.draw(password); // Draw the password text
         window.display();
     }
 }
@@ -262,4 +323,9 @@ void WindowInit::drawRegMenu() {
     window.draw(StAccOptionRect);
     window.draw(CAccOptionRect);
     window.draw(SeAccOptionRect);
+    window.draw(StAccIcon);
+    window.draw(stAccText);
+    window.draw(CAccIcon);
+    window.draw(cAccText);
+
 }

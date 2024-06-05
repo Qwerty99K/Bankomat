@@ -28,6 +28,10 @@
 
 #define REG_GAPS 20
 
+#define ST_ACC_SCALE 0.0215f
+#define C_ACC_SCALE 0.085f
+
+
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -56,6 +60,10 @@ private:
     sf::Text exitText;
     sf::Text passText;
 
+    sf::Text stAccText;
+    sf::Text cAccText;
+    sf::Text seAccText;
+
     // Shapes
     sf::RectangleShape dimRect;
     sf::RectangleShape regRect;
@@ -66,9 +74,23 @@ private:
     sf::RectangleShape loginBox;
     sf::RectangleShape passwordBox;
 
+    sf::Texture CAccTexture;
+    sf::Sprite CAccIcon;
     sf::RectangleShape CAccOptionRect;
+
+    sf::Texture StAccTexture;
+    sf::Sprite StAccIcon;
     sf::RectangleShape StAccOptionRect;
+    
+    sf::Texture SeAccTexture;
+    sf::Sprite SeAccIcon;
     sf::RectangleShape SeAccOptionRect;
+
+    sf::Texture logTexture;
+    sf::Sprite logIcon;
+
+    sf::Texture regTexture;
+    sf::Sprite regIcon;
 
     // Initialize functions
     void TexturesInit();
