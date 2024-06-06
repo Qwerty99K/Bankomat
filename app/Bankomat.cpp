@@ -6,8 +6,13 @@
 #include "../include/WindowInit.h"
 
 int main() {
-	WindowInit* menu = new WindowInit();
-	menu->menuInit();
+	sf::Font font;
+	if (!font.loadFromFile(FONT_PATH)) {
+		throw std::string("Nothing to load.");
+	}
+	WindowInit* window = new WindowInit(BACKGROUND_PATH, font);
+	MenuInit* menu_window = new MenuInit(window->bgPath, window->menuFont);
+	menu_window->showMenu();
 	return 0;
 }
 

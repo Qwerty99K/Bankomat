@@ -86,7 +86,6 @@ void MenuInit::showMenu() {
                     std::cout << "[DEBUG] Register selected" << std::endl;
                     RegisterInit* register_window = new RegisterInit(this->bgPath, this->menuFont, STANDARD_ACCOUNT_PATH, CHILD_ACCOUNT_PATH, SENIOR_ACCOUNT_PATH, BANK_ICO_PATH);
                     register_window->showRegisterMenu();
-
                 }
                 else if (exitOptionText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     std::cout << "[DEBUG] App closed" << std::endl;

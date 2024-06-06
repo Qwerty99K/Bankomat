@@ -19,10 +19,12 @@
 #define RECT_COLOR sf::Color::White
 #define OUTLINE_COLOR sf::Color::Black
 
+#define BACKGROUND_PATH "../Bankomat/resources/textures/background.jpg"
 #define STANDARD_ACCOUNT_PATH "../Bankomat/resources/textures/StandardAccText.jpg"
 #define CHILD_ACCOUNT_PATH "../Bankomat/resources/textures/ChildAccText.jpg"
 #define SENIOR_ACCOUNT_PATH "../Bankomat/resources/textures/bank.jpg"
 #define BANK_ICO_PATH "../Bankomat/resources/textures/bank.jpg"
+#define FONT_PATH "../Bankomat/resources/PtRoot.ttf"
 
 #define ACCOUNT_OPTION sf::Vector2f(200, 300)
 #define STANDARD_ACCOUNT_SCALE 0.5f
@@ -34,12 +36,12 @@ class WindowInit {
 public:
     WindowInit(const std::string& bgPath, const sf::Font& font);
     ~WindowInit();
+    sf::Font menuFont;
+    std::string bgPath;
 
 protected:
     sf::RenderWindow window;
-    sf::Font menuFont;
     sf::RectangleShape dimRect;
-    std::string bgPath;
 
     sf::Texture textureInit(const std::string& texturePath);
     void shapeInit(sf::RectangleShape& obj, const sf::Color& color, const sf::Vector2f& position, const int& thickness, const sf::Color& outlineColor);
