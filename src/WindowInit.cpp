@@ -202,7 +202,6 @@ void WindowInit::menuInit() {
 void WindowInit::drawMainMenu() {
     window.draw(menuBackground);
     window.draw(dimRect);
-    window.draw(bankIco);
     window.draw(bankName);
     window.draw(logRect);
     window.draw(logButton);
@@ -372,6 +371,7 @@ void WindowInit::createAccount() {
     bool isLastNameActive = false;
     bool isAddressActive = false;
     bool isAgeActive = false;
+    bool isAcceptBoxActive = false;
 
     // Create input boxes and labels
     sf::RectangleShape nameBox(sf::Vector2f(200, 30));
@@ -380,6 +380,9 @@ void WindowInit::createAccount() {
     sf::RectangleShape ageBox(sf::Vector2f(200, 30));
     sf::RectangleShape loginBox(sf::Vector2f(200, 30));
     sf::RectangleShape passwordBox(sf::Vector2f(200, 30));
+    sf::RectangleShape activeAcceptBox(sf::Vector2f(200, 30)); // activate the terms box
+    sf::RectangleShape inactiveAcceptBox(sf::Vector2f(200, 30)); // disactive the terms box
+
 
     // Set outlines
     nameBox.setOutlineThickness(2);
@@ -394,6 +397,11 @@ void WindowInit::createAccount() {
     loginBox.setOutlineColor(sf::Color::Black);
     passwordBox.setOutlineThickness(2);
     passwordBox.setOutlineColor(sf::Color::Black);
+    activeAcceptBox.setOutlineThickness(2);
+    activeAcceptBox.setOutlineColor(sf::Color::Black);
+    activeAcceptBox.setFillColor(sf::Color::Green);
+    inactiveAcceptBox.setOutlineThickness(2);
+    inactiveAcceptBox.setOutlineColor(sf::Color::Black);
 
     // Create labels for the boxes
     sf::Text nameText;
@@ -435,6 +443,8 @@ void WindowInit::createAccount() {
     passwordText.setPosition(basePosition.x, basePosition.y + 5 * spacing);
     passwordBox.setPosition(passwordText.getPosition().x + xShift, passwordText.getPosition().y);
 
+    inactiveAcceptBox.setPosition(basePosition.x + 650, basePosition.y + 5 * spacing);
+    activeAcceptBox.setPosition(basePosition.x + 650, basePosition.y + 5 * spacing);
     // Variables to store user input
     std::string nameInput{ "" };
     std::string lastNameInput{ "" };
@@ -466,6 +476,12 @@ void WindowInit::createAccount() {
     age.setPosition(ageBox.getPosition().x + 5, ageBox.getPosition().y);
     login.setPosition(loginBox.getPosition().x + 5, loginBox.getPosition().y);
     password.setPosition(passwordBox.getPosition().x + 5, passwordBox.getPosition().y);
+    bankIco.setPosition(age.getPosition().x + 425, lastName.getPosition().y - 125);
+
+    sf::Text acceptText;
+    SetText(acceptText, "Akceptuje regulamin banku", sf::Color::Black);
+    acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
+
 
     // Helper function to create a masked string of asterisks
     auto createAsteriskString = [](const std::string& input) {
@@ -532,6 +548,14 @@ void WindowInit::createAccount() {
                     isAgeActive = false;
                     isLoginActive = false;
                     isPasswordActive = true;
+                }
+                else if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && !isAcceptBoxActive) {
+                    isAcceptBoxActive = true;
+                    std::cout << "[DEBUG] Active box" << std::endl;
+                }
+                else if (inactiveAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
+                    isAcceptBoxActive = false;
+                    std::cout << "[DEBUG] Inactive box" << std::endl;
                 }
                 break;
 
@@ -628,6 +652,14 @@ void WindowInit::createAccount() {
         window.draw(age);      // Draw the age text
         window.draw(login);    // Draw the login text
         window.draw(password); // Draw the password text
+        window.draw(bankIco);
+        if (isAcceptBoxActive) {
+            window.draw(activeAcceptBox);
+        }
+        else {
+            window.draw(inactiveAcceptBox);
+        }
+        window.draw(acceptText);
         window.display();
     }
 }
@@ -636,3 +668,4 @@ void WindowInit::createAccount() {
 
 // pozbyc sie tyle ifow i else ifow
 // nie trzeba niektorych rzeczy inicjalizowac, mozna wywalic do funkcji
+// 

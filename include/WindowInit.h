@@ -5,7 +5,7 @@
 #define MAIN_NAME "Menu"
 #define BANK_NAME "Bank Slonski"
 #define BANK_ICO_PATH "../Bankomat/resources/textures/bank.png"
-#define BANK_SCALE 0.2f
+#define BANK_SCALE 0.5f
 #define BANK_POS 25.f
 
 #define FONT_PATH "../Bankomat/resources/PtRoot.ttf"
