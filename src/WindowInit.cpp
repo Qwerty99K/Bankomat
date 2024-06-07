@@ -5,29 +5,20 @@
 #include <stdexcept>
 #include <vector>
 
-
-WindowInit::WindowInit(const std::string& bgPath, const sf::Font& font) : window(sf::VideoMode(WIDTH, HEIGHT), MAIN_NAME),
-bgPath(bgPath), menuFont(font), dimRect(sf::Vector2f(WIDTH, HEIGHT)) {
+WindowInit::WindowInit(sf::Font& font) : window(sf::VideoMode(WIDTH, HEIGHT), MAIN_NAME),
+menuFont(font), dimRect(sf::Vector2f(WIDTH, HEIGHT)) {
     window.setVerticalSyncEnabled(true);
-    dimRect.setFillColor(sf::Color(0, 0, 0, 150));
+    dimRect.setFillColor(sf::Color(0, 0, 0, 150)); // niepotrzebne te inicjalizacje dimrecta
 }
 
-sf::Texture WindowInit::textureInit(const std::string& texturePath) {
-    sf::Texture texture;
-    if (!texture.loadFromFile(texturePath)) {
-        throw std::runtime_error("Cannot load the texture.");
-    }
-    return texture;
-}
-
-void WindowInit::shapeInit(sf::RectangleShape& obj, const sf::Color& color, const sf::Vector2f& position, const int& thickness, const sf::Color& outlineColor) {
+void shapeInit(sf::RectangleShape& obj, const sf::Color& color, const sf::Vector2f& position, const int& thickness, const sf::Color& outlineColor) {
     obj.setFillColor(color);
-    obj.setPosition(position); // ewentualnie dac znowu na scale
+    obj.setPosition(position);
     obj.setOutlineThickness(thickness);
     obj.setOutlineColor(outlineColor);
 }
 
-void WindowInit::buttonInit(sf::RectangleShape& obj, const sf::Color& color, const sf::Vector2f& position, const int& thickness, const sf::Color& outlineColor) {
+void buttonInit(sf::RectangleShape& obj, const sf::Color& color, const sf::Vector2f& position, const int& thickness, const sf::Color& outlineColor) {
     obj.setFillColor(color);
     obj.setPosition(position);
     obj.setOutlineThickness(thickness);
@@ -38,34 +29,46 @@ WindowInit::~WindowInit() {
     std::cout << "[DEBUG] Program exit." << std::endl;
 }
 
-MenuInit::MenuInit(const std::string& bgPath, const sf::Font& font) : WindowInit(bgPath, font),
-bankName(BANK_NAME, font, FONT_SIZE), loginMenuRect(MENU_LOGIN_SIZE), loginOptionBox(MENU_RECT_SIZE),
-loginOptionText("Login", font, FONT_SIZE), registerOptionBox(MENU_RECT_SIZE), registerOptionText("Rejestracja", font, BANK_SIZE),
-exitOptionBox(MENU_RECT_SIZE), exitOptionText("Wyjdz", font, FONT_SIZE) {
-    bgBank.setTexture(textureInit(bgPath));
+void WindowInit::menuSiteAccessor() {
+    MenuInit* menu_access = new MenuInit(menuFont);
+    menu_access->setMenu();
+    menu_access->showMenu(window);
+    // free this memory in destructor
+}
+
+MenuInit::MenuInit(sf::Font& font) : clsFont(font), bankName(BANK_NAME, font, FONT_SIZE), loginMenuRect(MENU_LOGIN_SIZE), loginOptionBox(MENU_RECT_SIZE),
+loginOptionText("Login", font, FONT_SIZE), registerOptionBox(MENU_RECT_SIZE), registerOptionText("Rejestracja", font, FONT_SIZE),
+exitOptionBox(MENU_RECT_SIZE), exitOptionText("Wyjdz", font, FONT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)) { 
+    if (!bgBankT.loadFromFile(BACKGROUND_PATH)) {
+        throw std::string("Nothing to load.");
+    }
+    bgBank.setTexture(bgBankT);
+    bgBank.setScale(BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+    dimRect.setFillColor(DIM_RECT);
 }
 
 void MenuInit::setMenu() {
-
     sf::Vector2f tempPosition = RELATIVE_POSITION;
     bankName.setPosition(BANK_POS, BANK_POS);
     shapeInit(loginMenuRect, RECT_COLOR, RELATIVE_POSITION, 1, OUTLINE_COLOR);
 
-    tempPosition.y += 50; tempPosition.x += MENU_RECT_SIZE.x / 2;
+    tempPosition.y += 50; tempPosition.x += MENU_LOGIN_SIZE.x / 4 - 25;
     shapeInit(loginOptionBox, RECT_COLOR, tempPosition, 1, OUTLINE_COLOR);
+    loginOptionText.setFillColor(sf::Color::Black);
     loginOptionText.setPosition(tempPosition);
 
     tempPosition.y += 50 + MENU_RECT_SIZE.y;
     shapeInit(registerOptionBox, RECT_COLOR, tempPosition, 1, OUTLINE_COLOR);
+    registerOptionText.setFillColor(sf::Color::Black);
     registerOptionText.setPosition(tempPosition);
 
     tempPosition.y += 50 + MENU_RECT_SIZE.y;
     shapeInit(exitOptionBox, RECT_COLOR, tempPosition, 1, OUTLINE_COLOR);
+    exitOptionText.setFillColor(sf::Color::Black);
     exitOptionText.setPosition(tempPosition);
 }
 
-void MenuInit::showMenu() {
-    setMenu();
+void MenuInit::showMenu(sf::RenderWindow& window) {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -78,14 +81,11 @@ void MenuInit::showMenu() {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 if (loginOptionText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     std::cout << "[DEBUG] Login selected" << std::endl;
-                    LoginInit* login_window = new LoginInit(this->bgPath, this->menuFont, this->loginMenuRect, this->loginOptionBox, this->loginOptionText);
-                    login_window->showLoginMenu();
-                    delete login_window; login_window = nullptr;
+                    loginSiteAccessor(window);
                 }
                 else if (registerOptionText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     std::cout << "[DEBUG] Register selected" << std::endl;
-                    RegisterInit* register_window = new RegisterInit(this->bgPath, this->menuFont, STANDARD_ACCOUNT_PATH, CHILD_ACCOUNT_PATH, SENIOR_ACCOUNT_PATH, BANK_ICO_PATH);
-                    register_window->showRegisterMenu();
+                    registerSiteAccessor(window);
                 }
                 else if (exitOptionText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     std::cout << "[DEBUG] App closed" << std::endl;
@@ -95,13 +95,24 @@ void MenuInit::showMenu() {
             }
         }
         window.clear(sf::Color::White);
-        drawMenu();
+        window.draw(bgBank);
+        drawMenu(window);
         window.display();
     }
 }
 
-void MenuInit::drawMenu() {
-    window.draw(bgBank);
+void MenuInit::loginSiteAccessor(sf::RenderWindow& window) {
+    LoginInit* login_window = new LoginInit(this->clsFont, this->loginMenuRect, this->loginOptionBox, this->loginOptionText);
+    login_window->showLoginMenu(window);
+}
+
+void MenuInit::registerSiteAccessor(sf::RenderWindow& window) {
+    RegisterInit* register_window = new RegisterInit(this->clsFont);
+    register_window->setRegisterMenu();
+    register_window->showRegisterMenu(window);
+}
+
+void MenuInit::drawMenu(sf::RenderWindow& window) {
     window.draw(dimRect);
     window.draw(bankName);
     window.draw(loginMenuRect);
@@ -117,37 +128,52 @@ MenuInit::~MenuInit() {
     std::cout << "[DEBUG] Class MenuInit -> exit" << std::endl;
 }
 
-LoginInit::LoginInit(const std::string& bgPath, const sf::Font& font, sf::RectangleShape& loginMenuRect,
-    sf::RectangleShape& loginOptionBox, sf::Text& loginOptionText) : WindowInit(bgPath, font),
+LoginInit::LoginInit(sf::Font& font, sf::RectangleShape& loginMenuRect,
+    sf::RectangleShape& loginOptionBox, sf::Text& loginOptionText) : clsFont(font),
     loginMenuRect(loginMenuRect), loginOptionBox(loginOptionBox), loginOptionText(loginOptionText),
-    passwordOptionBox(MENU_RECT_SIZE), passwordOptionText("Haslo", font, FONT_SIZE) {}
+    passwordOptionBox(MENU_RECT_SIZE), passwordOptionText("Haslo", font, FONT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)) {
+    if (!bgBankT.loadFromFile(BACKGROUND_PATH)) {
+        throw std::string("Nothing to load.");
+    }
+    bgBank.setTexture(bgBankT);
+    bgBank.setScale(BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+    dimRect.setFillColor(DIM_RECT);
+}
 
-void LoginInit::showLoginMenu() {
-    bool isLoginActive = false;
-    bool isPasswordActive = false;
+
+void LoginInit::showLoginMenu(sf::RenderWindow& window) {
+
     sf::Vector2f loginOptionBoxPos = loginOptionBox.getPosition();
-    sf::Vector2f passwordOptionBoxPos = passwordOptionBox.getPosition();
+    sf::Vector2f passwordOptionBoxPos = loginOptionBoxPos;
+    passwordOptionBoxPos.y += 125;
+    shapeInit(passwordOptionBox, RECT_COLOR, passwordOptionBoxPos, 1, OUTLINE_COLOR);
 
     loginOptionText.setPosition(loginOptionBoxPos.x, loginOptionBoxPos.y - (FONT_SIZE + 6));
     passwordOptionText.setPosition(passwordOptionBoxPos.x, passwordOptionBoxPos.y - (FONT_SIZE + 6));
+    passwordOptionText.setFillColor(sf::Color::Black);
 
     std::string loginInput{ "" };
     std::string passwordInput{ "" };
 
-    sf::Text userLoginText("", menuFont, FONT_SIZE);
-    sf::Text userPasswordText("", menuFont, FONT_SIZE);
-    sf::Text loginButtonText("Zaloguj", menuFont, FONT_SIZE);
+    sf::Text userLoginText("", clsFont, FONT_SIZE);
+    userLoginText.setFillColor(sf::Color::Black);
+    sf::Text userPasswordText("", clsFont, FONT_SIZE);
+    userPasswordText.setFillColor(sf::Color::Black);
+    sf::Text loginButtonText("Zaloguj", clsFont, FONT_SIZE);
+    loginButtonText.setFillColor(sf::Color::Black);
     sf::RectangleShape loginButtonRect(MENU_RECT_SIZE);
-    userPasswordText.setPosition(passwordOptionBoxPos);
-    passwordOptionBoxPos.y += 75;
     userLoginText.setPosition(loginOptionBoxPos);
+    userPasswordText.setPosition(passwordOptionBoxPos);
+    passwordOptionBoxPos.y += 100;
     shapeInit(loginButtonRect, RECT_COLOR, passwordOptionBoxPos, 1, OUTLINE_COLOR);
+    loginButtonText.setPosition(loginButtonRect.getPosition());
+    bool isLoginActive = false;
+    bool isPasswordActive = false;
 
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-
             switch (event.type) {
             case sf::Event::Closed:
                 window.close();
@@ -156,13 +182,11 @@ void LoginInit::showLoginMenu() {
             case sf::Event::MouseButtonPressed:
                 // Check if the userLoginText box is clicked
                 if (loginOptionBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    isLoginActive = true;
-                    isPasswordActive = false;
+                    isLoginActive = true; isPasswordActive = false;
                 }
                 // Check if the userPasswordText box is clicked
                 else if (passwordOptionBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    isLoginActive = false;
-                    isPasswordActive = true;
+                    isPasswordActive = true; isLoginActive = false;
                 }
                 else if (loginButtonRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     std::cout << "[DEBUG] Initializing logging..." << std::endl;
@@ -196,7 +220,7 @@ void LoginInit::showLoginMenu() {
                 break;
             }
         }
-        drawLoginMenu();
+        drawLoginMenu(window);
         window.draw(userLoginText);    // Draw the userLoginText text
         window.draw(userPasswordText); // Draw the userPasswordText text
         window.draw(loginButtonRect);
@@ -205,7 +229,7 @@ void LoginInit::showLoginMenu() {
     }
 }
 
-void LoginInit::drawLoginMenu() {
+void LoginInit::drawLoginMenu(sf::RenderWindow& window) {
     window.clear(sf::Color::White);
     window.draw(bgBank);
     window.draw(dimRect);
@@ -217,22 +241,39 @@ void LoginInit::drawLoginMenu() {
 }
 
 LoginInit::~LoginInit() {
-    std::cout << "[DEBUG] Login Init exit" << std::endl;
+    std::cout << "[DEBUG] Class LoginInit -> exit" << std::endl;
 }
 
-RegisterInit::RegisterInit(const std::string& bgPath, const sf::Font& font, const std::string& stTexturePath,
-    const std::string& cTexturePath, const std::string& seTexturePath, const std::string& bankTexturePath) :
-    WindowInit(bgPath, font), childOptionRect(ACCOUNT_OPTION),
-    standardOptionRect(ACCOUNT_OPTION), seniorOptionRect(ACCOUNT_OPTION),
+RegisterInit::RegisterInit(sf::Font& font) : clsFont(font), childOptionRect(REGISTER_OPTIONS_SIZE), standardOptionRect(REGISTER_OPTIONS_SIZE), seniorOptionRect(REGISTER_OPTIONS_SIZE),
     standardText("Konto Standardowe", font, FONT_SIZE), childText("Konto dla dzieci", font, FONT_SIZE),
-    seniorText("Konto dla seniora", font, FONT_SIZE) {
-    bgBank.setTexture(textureInit(bankTexturePath));
-    standardAccountIcon.setTexture(textureInit(stTexturePath));
-    childAccountIcon.setTexture(textureInit(cTexturePath));
-    seniorAccountIcon.setTexture(textureInit(seTexturePath));
+    seniorText("Konto dla seniora", font, FONT_SIZE), registerRect(REGISTER_RECT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)) {
+    if (!standardAccontIconT.loadFromFile(STANDARD_ACCOUNT_PATH)) {
+        throw std::string("Nothing to load.");
+    }
+    if (!seniorAccountIconT.loadFromFile(SENIOR_ACCOUNT_PATH)) {
+        throw std::string("Nothing to load.");
+    }
+    if (!childAccountIconT.loadFromFile(CHILD_ACCOUNT_PATH)) {
+        throw std::string("Nothing to load.");
+    }
+    if (!bankIconT.loadFromFile(BANK_ICO_PATH)) {
+        throw std::string("Nothing to load.");
+    }
+    if (!bgBankT.loadFromFile(BACKGROUND_PATH)) {
+        throw std::string("Nothing to load.");
+    }
+    bgBank.setTexture(bgBankT);
+    bgBank.setScale(BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+    dimRect.setFillColor(DIM_RECT);
+    standardAccountIcon.setTexture(standardAccontIconT);
+    seniorAccountIcon.setTexture(seniorAccountIconT);
+    childAccountIcon.setTexture(childAccountIconT);
+    bankIcon.setTexture(bankIconT);
+    bankIcon.setScale(BANK_SCALE, BANK_SCALE);
+
 }
 
-void RegisterInit::showRegisterMenu() {
+void RegisterInit::showRegisterMenu(sf::RenderWindow& window) {
     window.clear(sf::Color::White);
     while (window.isOpen()) {
         sf::Event event;
@@ -245,7 +286,7 @@ void RegisterInit::showRegisterMenu() {
             case sf::Event::MouseButtonPressed:
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 if (standardOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    createAccount();
+                    createAccount(window);
                     std::cout << "[DEBUG] Standard Account selected" << std::endl;
                 }
                 else if (childOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
@@ -257,12 +298,12 @@ void RegisterInit::showRegisterMenu() {
                 break;
             }
         }
-        drawRegisterMenu();
+        drawRegisterMenu(window);
         window.display();
     }
 }
 
-void RegisterInit::drawRegisterMenu() {
+void RegisterInit::drawRegisterMenu(sf::RenderWindow& window) {
     window.draw(bgBank);
     window.draw(dimRect);
     window.draw(standardOptionRect);
@@ -272,27 +313,31 @@ void RegisterInit::drawRegisterMenu() {
     window.draw(standardText);
     window.draw(childAccountIcon);
     window.draw(childText);
-    // here senior icon
     window.draw(seniorText);
 }
 
 void RegisterInit::setRegisterMenu() {
-    shapeInit(standardOptionRect, RECT_COLOR, sf::Vector2f(360, 100), 1, OUTLINE_COLOR);
-    shapeInit(childOptionRect, RECT_COLOR, sf::Vector2f(100, 100), 1, OUTLINE_COLOR);
-    shapeInit(seniorOptionRect, RECT_COLOR, sf::Vector2f(820, 100), 1, OUTLINE_COLOR);
+    shapeInit(registerRect, RECT_COLOR, sf::Vector2f(100, 100), 1, OUTLINE_COLOR);
+
+    shapeInit(childOptionRect, RECT_COLOR, sf::Vector2f(110, 110), 1, OUTLINE_COLOR);
+    childAccountIcon.setPosition(545, 200);
+    childText.setPosition(530, 400);
+    childText.setFillColor(sf::Color::Black);
+    childAccountIcon.setScale(CHILD_ACCOUNT_SCALE, CHILD_ACCOUNT_SCALE);
+    
+    shapeInit(standardOptionRect, RECT_COLOR, sf::Vector2f(475, 110), 1, OUTLINE_COLOR);
     standardAccountIcon.setPosition(185, 200);
     standardText.setPosition(150, 400);
+    standardText.setFillColor(sf::Color::Black);
     standardAccountIcon.setScale(STANDARD_ACCOUNT_SCALE, STANDARD_ACCOUNT_SCALE);
-
-    childAccountIcon.setPosition(545, 200);
-    childText.setPosition(515, 400);
-    childAccountIcon.setScale(CHILD_ACCOUNT_SCALE, CHILD_ACCOUNT_SCALE);
-
-    seniorText.setPosition(875, 400);
+    
+    shapeInit(seniorOptionRect, RECT_COLOR, sf::Vector2f(840, 110), 1, OUTLINE_COLOR);
+    seniorText.setPosition(890, 400);
+    seniorText.setFillColor(sf::Color::Black);
     //loginBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 50);
     //passwordBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 175);
 }
-void RegisterInit::createAccount() {
+void RegisterInit::createAccount(sf::RenderWindow& window) {
     setRegisterMenu();
     sf::RectangleShape nameBox(REGISTER_BOX_SIZE);
     sf::RectangleShape lastNameBox(REGISTER_BOX_SIZE);
@@ -305,13 +350,18 @@ void RegisterInit::createAccount() {
     sf::Vector2f basePosition(180, 180);
 
     // Create labels for the boxes
-    sf::Text nameText("Imie", menuFont, FONT_SIZE);
-    sf::Text lastNameText("Nazwisko", menuFont, FONT_SIZE);
-    sf::Text addressText("Adres", menuFont, FONT_SIZE);
-    sf::Text ageText("Wiek", menuFont, FONT_SIZE);
-    sf::Text loginText("Login", menuFont, FONT_SIZE);
-    sf::Text passwordText("Haslo", menuFont, FONT_SIZE);
-
+    sf::Text nameText("Imie", clsFont, FONT_SIZE);
+    nameText.setFillColor(sf::Color::Black);
+    sf::Text lastNameText("Nazwisko", clsFont, FONT_SIZE);
+    lastNameText.setFillColor(sf::Color::Black);
+    sf::Text addressText("Adres", clsFont, FONT_SIZE);
+    addressText.setFillColor(sf::Color::Black);
+    sf::Text ageText("Wiek", clsFont, FONT_SIZE);
+    ageText.setFillColor(sf::Color::Black);
+    sf::Text loginText("Login", clsFont, FONT_SIZE);
+    loginText.setFillColor(sf::Color::Black);
+    sf::Text passwordText("Haslo", clsFont, FONT_SIZE);
+    passwordText.setFillColor(sf::Color::Black);
     float spacing = 60.f;
     float shift = 180.f;
     float baseX = basePosition.x;
@@ -336,7 +386,7 @@ void RegisterInit::createAccount() {
     shapeInit(passwordBox, RECT_COLOR, sf::Vector2f(baseX + shift, baseY + 5 * spacing), 1, OUTLINE_COLOR);
 
     sf::Vector2f acceptBoxPosition(baseX + 650, baseY + 5 * spacing);
-    shapeInit(activeAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
+    shapeInit(activeAcceptBox, sf::Color::Green, acceptBoxPosition, 1, OUTLINE_COLOR);
     shapeInit(inactiveAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
 
     std::string nameInput{ "" };
@@ -347,12 +397,18 @@ void RegisterInit::createAccount() {
     std::string passwordInput{ "" };
 
     // Create SFML Text objects for displaying user input
-    sf::Text name("", menuFont, FONT_SIZE);
-    sf::Text lastName("", menuFont, FONT_SIZE);
-    sf::Text address("", menuFont, FONT_SIZE);
-    sf::Text age("", menuFont, FONT_SIZE);
-    sf::Text login("", menuFont, FONT_SIZE);
-    sf::Text password("", menuFont, FONT_SIZE);
+    sf::Text name("", clsFont, FONT_SIZE);
+    name.setFillColor(sf::Color::Black);
+    sf::Text lastName("", clsFont, FONT_SIZE);
+    lastName.setFillColor(sf::Color::Black);
+    sf::Text address("", clsFont, FONT_SIZE);
+    address.setFillColor(sf::Color::Black);
+    sf::Text age("", clsFont, FONT_SIZE);
+    age.setFillColor(sf::Color::Black);
+    sf::Text login("", clsFont, FONT_SIZE);
+    login.setFillColor(sf::Color::Black);
+    sf::Text password("", clsFont, FONT_SIZE);
+    password.setFillColor(sf::Color::Black);
 
     // Position the SFML Text objects
     name.setPosition(nameBox.getPosition().x + 5, nameBox.getPosition().y);
@@ -363,21 +419,23 @@ void RegisterInit::createAccount() {
     password.setPosition(passwordBox.getPosition().x + 5, passwordBox.getPosition().y);
     bankIcon.setPosition(age.getPosition().x + 425, lastName.getPosition().y - 125);
 
-    sf::Text acceptText("Akceptuje regulamin banku", menuFont, FONT_SIZE);
+    sf::Text acceptText("Akceptuje regulamin banku", clsFont, FONT_SIZE);
+    acceptText.setFillColor(sf::Color::Black);
     acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
 
     auto createAsteriskString = [](const std::string& input) {
         return std::string(input.size(), '*');
         };
 
+    bool isLoginActive = false;
+    bool isPasswordActive = false;
+    bool isNameActive = false;
+    bool isLastNameActive = false;
+    bool isAddressActive = false;
+    bool isAgeActive = false;
+    bool isAcceptBoxActive = false;
+
     while (window.isOpen()) {
-        bool isLoginActive = false;
-        bool isPasswordActive = false;
-        bool isNameActive = false;
-        bool isLastNameActive = false;
-        bool isAddressActive = false;
-        bool isAgeActive = false;
-        bool isAcceptBoxActive = false;
         sf::Event event;
         while (window.pollEvent(event)) {
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -391,20 +449,50 @@ void RegisterInit::createAccount() {
                 // Check which box is clicked
                 if (nameBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isNameActive = true;
+                    isLastNameActive = false;
+                    isAddressActive = false;
+                    isAgeActive = false;
+                    isLoginActive = false;
+                    isPasswordActive = false;
                 }
                 else if (lastNameBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
                     isLastNameActive = true;
+                    isAddressActive = false;
+                    isAgeActive = false;
+                    isLoginActive = false;
+                    isPasswordActive = false;
                 }
                 else if (addressBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = false;
                     isAddressActive = true;
+                    isAgeActive = false;
+                    isLoginActive = false;
+                    isPasswordActive = false;
                 }
                 else if (ageBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = false;
+                    isAddressActive = false;
                     isAgeActive = true;
+                    isLoginActive = false;
+                    isPasswordActive = false;
                 }
                 else if (loginBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = false;
+                    isAddressActive = false;
+                    isAgeActive = false;
                     isLoginActive = true;
+                    isPasswordActive = false;
                 }
                 else if (passwordBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isNameActive = false;
+                    isLastNameActive = false;
+                    isAddressActive = false;
+                    isAgeActive = false;
+                    isLoginActive = false;
                     isPasswordActive = true;
                 }
                 else if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && !isAcceptBoxActive) {
@@ -487,10 +575,10 @@ void RegisterInit::createAccount() {
                 break;
             }
         }
-
         window.clear(sf::Color::White);
         window.draw(bgBank);
         window.draw(dimRect);
+        window.draw(registerRect);
         window.draw(nameBox);
         window.draw(lastNameBox);
         window.draw(addressBox);

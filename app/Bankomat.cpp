@@ -10,9 +10,8 @@ int main() {
 	if (!font.loadFromFile(FONT_PATH)) {
 		throw std::string("Nothing to load.");
 	}
-	WindowInit* window = new WindowInit(BACKGROUND_PATH, font);
-	MenuInit* menu_window = new MenuInit(window->bgPath, window->menuFont);
-	menu_window->showMenu();
+	WindowInit* window = new WindowInit(font);
+	window->menuSiteAccessor();
 	return 0;
 }
 
