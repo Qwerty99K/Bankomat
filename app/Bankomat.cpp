@@ -12,6 +12,7 @@ int main() {
 	}
 	WindowInit* window = new WindowInit(font);
 	window->menuSiteAccessor();
+	delete window; window = nullptr;
 	return 0;
 }
 
