@@ -25,15 +25,16 @@ void buttonInit(sf::RectangleShape& obj, const sf::Color& color, const sf::Vecto
     obj.setOutlineColor(outlineColor);
 }
 
-WindowInit::~WindowInit() {
-    std::cout << "[DEBUG] Program exit." << std::endl;
-}
-
 void WindowInit::menuSiteAccessor() {
-    MenuInit* menu_access = new MenuInit(menuFont);
+    std::unique_ptr<MenuInit> menu_access(new MenuInit(menuFont));
     menu_access->setMenu();
     menu_access->showMenu(window);
-    // free this memory in destructor
+
+}
+
+WindowInit::~WindowInit() {
+
+    std::cout << "[DEBUG] Program exit." << std::endl;
 }
 
 MenuInit::MenuInit(sf::Font& font) : clsFont(font), bankName(BANK_NAME, font, FONT_SIZE), loginMenuRect(MENU_LOGIN_SIZE), loginOptionBox(MENU_RECT_SIZE),
@@ -102,12 +103,12 @@ void MenuInit::showMenu(sf::RenderWindow& window) {
 }
 
 void MenuInit::loginSiteAccessor(sf::RenderWindow& window) {
-    LoginInit* login_window = new LoginInit(this->clsFont, this->loginMenuRect, this->loginOptionBox, this->loginOptionText);
+    std::unique_ptr<LoginInit> login_window(new LoginInit(this->clsFont, this->loginMenuRect, this->loginOptionBox, this->loginOptionText));
     login_window->showLoginMenu(window);
 }
 
 void MenuInit::registerSiteAccessor(sf::RenderWindow& window) {
-    RegisterInit* register_window = new RegisterInit(this->clsFont);
+    std::unique_ptr<RegisterInit> register_window(new RegisterInit(this->clsFont));
     register_window->setRegisterMenu();
     register_window->showRegisterMenu(window);
 }
