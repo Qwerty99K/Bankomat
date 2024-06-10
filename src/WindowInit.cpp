@@ -1,6 +1,10 @@
 ﻿#include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 #include "../include/WindowInit.h"
+#include "../include/StandardAccount.h"
+#include "../include/ChildAccount.h"
+#include "../include/SeniorAccount.h"
+#include "../include/createEntries.h"
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -287,14 +291,19 @@ void RegisterInit::showRegisterMenu(sf::RenderWindow& window) {
             case sf::Event::MouseButtonPressed:
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 if (standardOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    createAccount(window);
+                    AccountType selectedAccount = AccountType::STANDARD_ACCOUNT;
                     std::cout << "[DEBUG] Standard Account selected" << std::endl;
+                    createAccount(window, selectedAccount);
                 }
                 else if (childOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    AccountType selectedAccount = AccountType::CHILD_ACCOUNT;
                     std::cout << "[DEBUG] Child Account selected" << std::endl;
+                    createAccount(window, selectedAccount);
                 }
                 else if (seniorOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    AccountType selectedAccount = AccountType::SENIOR_ACCOUNT;
                     std::cout << "[DEBUG] Senior Account selected" << std::endl;
+                    createAccount(window, selectedAccount);
                 }
                 break;
             }
@@ -338,8 +347,9 @@ void RegisterInit::setRegisterMenu() {
     //loginBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 50);
     //passwordBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 175);
 }
-void RegisterInit::createAccount(sf::RenderWindow& window) {
+void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedAcc) {
     setRegisterMenu();
+    
     sf::RectangleShape nameBox(REGISTER_BOX_SIZE);
     sf::RectangleShape lastNameBox(REGISTER_BOX_SIZE);
     sf::RectangleShape addressBox(REGISTER_BOX_SIZE);
@@ -504,8 +514,11 @@ void RegisterInit::createAccount(sf::RenderWindow& window) {
                     isAcceptBoxActive = false;
                     std::cout << "[DEBUG] Inactive box" << std::endl;
                 }
+                // work in progress, nie kopiuj bo nie dziala
+                if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
+                    createEntry(selectedAcc, loginInput, passwordInput, nameInput, lastNameInput, addressInput, 100, ageInput);
+                }
                 break;
-
             case sf::Event::TextEntered:
                 if (isNameActive) {
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
@@ -575,38 +588,38 @@ void RegisterInit::createAccount(sf::RenderWindow& window) {
                 }
                 break;
             }
+            window.clear(sf::Color::White);
+            window.draw(bgBank);
+            window.draw(dimRect);
+            window.draw(registerRect);
+            window.draw(nameBox);
+            window.draw(lastNameBox);
+            window.draw(addressBox);
+            window.draw(ageBox);
+            window.draw(loginBox);
+            window.draw(passwordBox);
+            window.draw(nameText);
+            window.draw(lastNameText);
+            window.draw(addressText);
+            window.draw(ageText);
+            window.draw(loginText);
+            window.draw(passwordText);
+            window.draw(name);     // Draw the name text
+            window.draw(lastName); // Draw the last name text
+            window.draw(address);  // Draw the address text
+            window.draw(age);      // Draw the age text
+            window.draw(login);    // Draw the userLoginText text
+            window.draw(password); // Draw the userPasswordText text
+            window.draw(bankIcon);
+            if (isAcceptBoxActive) {
+                window.draw(activeAcceptBox);
+            }
+            else {
+                window.draw(inactiveAcceptBox);
+            }
+            window.draw(acceptText);
+            window.display();
         }
-        window.clear(sf::Color::White);
-        window.draw(bgBank);
-        window.draw(dimRect);
-        window.draw(registerRect);
-        window.draw(nameBox);
-        window.draw(lastNameBox);
-        window.draw(addressBox);
-        window.draw(ageBox);
-        window.draw(loginBox);
-        window.draw(passwordBox);
-        window.draw(nameText);
-        window.draw(lastNameText);
-        window.draw(addressText);
-        window.draw(ageText);
-        window.draw(loginText);
-        window.draw(passwordText);
-        window.draw(name);     // Draw the name text
-        window.draw(lastName); // Draw the last name text
-        window.draw(address);  // Draw the address text
-        window.draw(age);      // Draw the age text
-        window.draw(login);    // Draw the userLoginText text
-        window.draw(password); // Draw the userPasswordText text
-        window.draw(bankIcon);
-        if (isAcceptBoxActive) {
-            window.draw(activeAcceptBox);
-        }
-        else {
-            window.draw(inactiveAcceptBox);
-        }
-        window.draw(acceptText);
-        window.display();
     }
 }
 

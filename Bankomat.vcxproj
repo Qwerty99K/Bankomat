@@ -155,13 +155,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ATM.cpp" />
     <ClCompile Include="src\ChildAccount.cpp" />
     <ClCompile Include="src\WindowInit.cpp" />
     <ClCompile Include="src\SeniorAccount.cpp" />
     <ClCompile Include="app\Bankomat.cpp" />
     <ClCompile Include="src\StandardAccount.cpp" />
     <ClCompile Include="src\sqlite3.c" />
-    <ClCompile Include="src\sqlite_use.cpp" />
+    <ClCompile Include="src\createEntries.cpp" />
     <ClCompile Include="tests\assert_values.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,10 +173,11 @@
     <None Include="resources\USERS_DATABASE.db" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ATM.h" />
     <ClInclude Include="include\ChildAccount.h" />
     <ClInclude Include="include\Status.h" />
     <ClInclude Include="include\WindowInit.h" />
-    <ClInclude Include="include\sqlite_use.h" />
+    <ClInclude Include="include\createEntries.h" />
     <ClInclude Include="include\StandardAccount.h" />
     <ClInclude Include="include\SeniorAccount.h" />
     <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3.h" />

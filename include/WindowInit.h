@@ -1,9 +1,16 @@
-#ifndef WINDOW_INIT_H
-#define WINDOW_INIT_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
-#include <string>
-#include <memory>
+#include <SFML/System/Vector2.hpp>
+#include "../include/WindowInit.h"
+#include "../include/StandardAccount.h"
+#include "../include/ChildAccount.h"
+#include "../include/SeniorAccount.h"
+#include "../include/createEntries.h"
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -40,6 +47,8 @@
 #define STANDARD_ACCOUNT_SCALE 0.0215f
 #define CHILD_ACCOUNT_SCALE 0.085f
 #define REGISTER_BOX_SIZE sf::Vector2f(200, 30)
+
+
 
 void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
 void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
@@ -113,7 +122,7 @@ public:
     void showRegisterMenu(sf::RenderWindow&);
     void setRegisterMenu();
     void drawRegisterMenu(sf::RenderWindow&);
-    void createAccount(sf::RenderWindow&);
+    void createAccount(sf::RenderWindow&, AccountType);
 private:
     sf::Font clsFont;
     sf::Sprite bgBank;
@@ -136,4 +145,3 @@ private:
     sf::Text seniorText;
 };
 
-#endif // WINDOW_INIT_H

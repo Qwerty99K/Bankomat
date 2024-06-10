@@ -21,7 +21,7 @@
     <ClCompile Include="src\sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\sqlite_use.cpp">
+    <ClCompile Include="src\createEntries.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\StandardAccount.cpp">
@@ -37,6 +37,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\WindowInit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ATM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,7 +69,7 @@
     <ClInclude Include="include\ChildAccount.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\sqlite_use.h">
+    <ClInclude Include="include\createEntries.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3.h">
@@ -76,6 +79,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\WindowInit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ATM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
