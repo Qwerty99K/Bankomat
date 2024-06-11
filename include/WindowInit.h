@@ -1,5 +1,4 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 #include "../include/WindowInit.h"
@@ -30,6 +29,7 @@
 #define BANK_SIZE 30
 #define BANK_SCALE 0.5f
 #define BANK_POS 25.f
+#define PROFILE_SCALE sf::Vector2f(0.35, 0.35)
 
 #define RELATIVE_POSITION sf::Vector2f(SCR_MIDPOINT.x - MENU_LOGIN_SIZE.x / 2, SCR_MIDPOINT.y - MENU_LOGIN_SIZE.y / 2)
 #define RECT_COLOR sf::Color::White
@@ -42,11 +42,15 @@
 #define SENIOR_ACCOUNT_PATH "../Bankomat/resources/textures/bank.png"
 #define BANK_ICO_PATH "../Bankomat/resources/textures/bank.png"
 #define FONT_PATH "../Bankomat/resources/PtRoot.ttf"
+#define PROFILE_PATH "../Bankomat/resources/textures/user_picture.png"
+
+
 
 #define ACCOUNT_OPTION sf::Vector2f(200, 300)
 #define STANDARD_ACCOUNT_SCALE 0.0215f
 #define CHILD_ACCOUNT_SCALE 0.085f
 #define REGISTER_BOX_SIZE sf::Vector2f(200, 30)
+#define INTERFACE_BOX_SIZE sf::Vector2f(250, 60)
 
 
 
@@ -144,4 +148,3 @@ private:
     sf::Text childText;
     sf::Text seniorText;
 };
-

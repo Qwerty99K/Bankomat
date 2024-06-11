@@ -4,6 +4,7 @@
 #include "../tests/importTests.h"
 #include "../include/createEntries.h"
 #include "../include/WindowInit.h"
+#include "../include/ATM.h"
 
 int main() {
 	sf::Font font;
@@ -12,6 +13,7 @@ int main() {
 	}
 	WindowInit* window = new WindowInit(font);
 	window->menuSiteAccessor();
+
 	delete window; window = nullptr;
 	return 0;
 }

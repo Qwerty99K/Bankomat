@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BankInterface.cpp" />
     <ClCompile Include="src\ATM.cpp" />
     <ClCompile Include="src\ChildAccount.cpp" />
     <ClCompile Include="src\WindowInit.cpp" />
@@ -173,6 +174,7 @@
     <None Include="resources\USERS_DATABASE.db" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\BankInterface.h" />
     <ClInclude Include="include\ATM.h" />
     <ClInclude Include="include\ChildAccount.h" />
     <ClInclude Include="include\Status.h" />
@@ -192,6 +194,7 @@
     <Image Include="resources\textures\login_icon.jpg" />
     <Image Include="resources\textures\register_icon.jpg" />
     <Image Include="resources\textures\StandardAccText.jpg" />
+    <Image Include="resources\textures\user_picture.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\NerdFont.ttf" />

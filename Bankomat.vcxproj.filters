@@ -42,6 +42,9 @@
     <ClCompile Include="src\ATM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\BankInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -84,6 +87,9 @@
     <ClInclude Include="include\ATM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\BankInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\bank.png">
@@ -102,6 +108,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="resources\textures\StandardAccText.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\user_picture.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

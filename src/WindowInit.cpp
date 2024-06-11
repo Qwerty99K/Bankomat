@@ -5,6 +5,7 @@
 #include "../include/ChildAccount.h"
 #include "../include/SeniorAccount.h"
 #include "../include/createEntries.h"
+#include "../include/BankInterface.h"
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -109,12 +110,15 @@ void MenuInit::showMenu(sf::RenderWindow& window) {
 void MenuInit::loginSiteAccessor(sf::RenderWindow& window) {
     std::unique_ptr<LoginInit> login_window(new LoginInit(this->clsFont, this->loginMenuRect, this->loginOptionBox, this->loginOptionText));
     login_window->showLoginMenu(window);
+    // jesli koniec to zniszcz tego pointera
+    return;
 }
 
 void MenuInit::registerSiteAccessor(sf::RenderWindow& window) {
     std::unique_ptr<RegisterInit> register_window(new RegisterInit(this->clsFont));
     register_window->setRegisterMenu();
     register_window->showRegisterMenu(window);
+    return;
 }
 
 void MenuInit::drawMenu(sf::RenderWindow& window) {
@@ -194,8 +198,10 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                     isPasswordActive = true; isLoginActive = false;
                 }
                 else if (loginButtonRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    // znajdz czy sa poprawne jesli sa to przejdz dalej
+                    std::unique_ptr<BankInterface> bank_interface(new BankInterface(this->clsFont, this->loginMenuRect));
+                    bank_interface->showInterface(window);
                     std::cout << "[DEBUG] Initializing logging..." << std::endl;
-                    // pass credentials and see if the account exists
                 }
                 break;
 
@@ -294,16 +300,19 @@ void RegisterInit::showRegisterMenu(sf::RenderWindow& window) {
                     AccountType selectedAccount = AccountType::STANDARD_ACCOUNT;
                     std::cout << "[DEBUG] Standard Account selected" << std::endl;
                     createAccount(window, selectedAccount);
+                    return;
                 }
                 else if (childOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     AccountType selectedAccount = AccountType::CHILD_ACCOUNT;
                     std::cout << "[DEBUG] Child Account selected" << std::endl;
                     createAccount(window, selectedAccount);
+                    return;
                 }
                 else if (seniorOptionRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     AccountType selectedAccount = AccountType::SENIOR_ACCOUNT;
                     std::cout << "[DEBUG] Senior Account selected" << std::endl;
                     createAccount(window, selectedAccount);
+                    return;
                 }
                 break;
             }
@@ -347,9 +356,9 @@ void RegisterInit::setRegisterMenu() {
     //loginBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 50);
     //passwordBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 175);
 }
+
 void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedAcc) {
     setRegisterMenu();
-    
     sf::RectangleShape nameBox(REGISTER_BOX_SIZE);
     sf::RectangleShape lastNameBox(REGISTER_BOX_SIZE);
     sf::RectangleShape addressBox(REGISTER_BOX_SIZE);
@@ -514,9 +523,11 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     isAcceptBoxActive = false;
                     std::cout << "[DEBUG] Inactive box" << std::endl;
                 }
-                // work in progress, nie kopiuj bo nie dziala
                 if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
                     createEntry(selectedAcc, loginInput, passwordInput, nameInput, lastNameInput, addressInput, 100, ageInput);
+                    return;
+                    // tu powinien byc testcase, np wyslanie 1 ze sie udalo i wtedy koniec programu
+
                 }
                 break;
             case sf::Event::TextEntered:
