@@ -199,9 +199,14 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                 }
                 else if (loginButtonRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     // znajdz czy sa poprawne jesli sa to przejdz dalej
-                    std::unique_ptr<BankInterface> bank_interface(new BankInterface(this->clsFont, this->loginMenuRect));
-                    bank_interface->showInterface(window);
                     std::cout << "[DEBUG] Initializing logging..." << std::endl;
+                    if (readEntry(AccountType::STANDARD_ACCOUNT, loginInput, passwordInput)) {
+                        std::unique_ptr<BankInterface> bank_interface(new BankInterface(this->clsFont, this->loginMenuRect));
+                        bank_interface->showInterface(window);
+                    }
+                    else {
+                        std::cout << "[DEBUG] Failed to login" << std::endl;
+                    }
                 }
                 break;
 
@@ -637,3 +642,5 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
 RegisterInit::~RegisterInit() {
     std::cout << "[DEBUG] Register exit." << std::endl;
 }
+
+// stworzyc klase button, rectangle na bazie sfml, aby uproscic wszystko

@@ -12,3 +12,5 @@ enum class AccountType {
 
 int createEntry(const AccountType&, const std::string&, const std::string&, const std::string&,
     const std::string&, const std::string&, const double&, const std::string&);
+
+int readEntry(const AccountType&, const std::string&, const std::string&);

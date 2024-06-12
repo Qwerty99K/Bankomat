@@ -15,6 +15,7 @@ public:
     BankInterface(sf::Font&, sf::RectangleShape&);
     void showInterface(sf::RenderWindow&);
     void drawInterface(sf::RenderWindow&);
+    void setInterface();
     /*
     loginMenuRect(loginMenuRect), loginOptionBox(loginOptionBox), loginOptionText(loginOptionText),
     passwordOptionBox(MENU_RECT_SIZE), passwordOptionText("Haslo", font, FONT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT))
@@ -38,5 +39,14 @@ private:
     sf::RectangleShape balanceBox;
     sf::RectangleShape transferBox;
     sf::RectangleShape withdrawBox;
+
+    sf::Text nameText;
+    sf::Text lastNameText;
+    sf::Text ageText;
+    sf::Text generateRaportText;
+    sf::Text loginText;
+    sf::Text balanceText;
+    sf::Text transferText;
+    sf::Text withdrawText;
 };
 

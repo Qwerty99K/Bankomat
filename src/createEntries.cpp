@@ -97,3 +97,72 @@ int createEntry(const AccountType& accType, const std::string& id, const std::st
     sqlite3_close(db);
     return 0;
 }
+
+
+// zhashowac te dane potem -> po hashu dopiero ta funkcja jest dostaje
+static int selectCallback(void* data, int argc, char** argv, char** azColName) {
+    bool* passwordMatch = static_cast<bool*>(data);
+    if (argc > 0) {
+        std::string retrievedPassword = argv[0] ? argv[0] : "";
+        std::string providedPassword = reinterpret_cast<char*>(data); // Provided password passed as data
+        *passwordMatch = (retrievedPassword == providedPassword);
+    }
+    return 0;
+}
+
+int readEntry(const AccountType& accType, const std::string& id, const std::string& password) {
+    sqlite3* db;
+    const char* accTable;
+
+    switch (accType) {
+    case AccountType::STANDARD_ACCOUNT:
+        accTable = "STANDARD_ACCOUNT";
+        break;
+    case AccountType::CHILD_ACCOUNT:
+        accTable = "CHILD_ACCOUNT";
+        break;
+    case AccountType::SENIOR_ACCOUNT:
+        accTable = "SENIOR_ACCOUNT";
+        break;
+    default:
+        std::cerr << "Invalid account type\n";
+        return 1;
+    }
+
+    // Open the database
+    int rc = sqlite3_open(DATABASE_PATH, &db);
+    if (rc) {
+        std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
+        return 1;
+    }
+
+    // Create the SQL select statement
+    std::string selectSQL = "SELECT PASSWORD FROM " + std::string(accTable) + " WHERE ID = ?;";
+
+    // Prepare the select statement
+    sqlite3_stmt* stmt;
+    rc = sqlite3_prepare_v2(db, selectSQL.c_str(), -1, &stmt, 0);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
+        sqlite3_close(db);
+        return 1;
+    }
+
+    // Bind the ID parameter
+    sqlite3_bind_text(stmt, 1, id.c_str(), -1, SQLITE_STATIC);
+
+    // Execute the statement and check the password
+    bool passwordMatch = false;
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        const unsigned char* dbPassword = sqlite3_column_text(stmt, 0);
+        if (dbPassword && password == reinterpret_cast<const char*>(dbPassword)) {
+            passwordMatch = true;
+        }
+    }
+
+    // Finalize and close
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+
+    return passwordMatch ? 0 : 1;
+}

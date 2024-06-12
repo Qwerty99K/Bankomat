@@ -36,8 +36,7 @@ withdrawBox(INTERFACE_BOX_SIZE) {
 	dimRect.setFillColor(DIM_RECT);
 	
 }
-
-void BankInterface::showInterface(sf::RenderWindow& window) {
+void BankInterface::setInterface() {
 	sf::Vector2f tempPos1(100, 100);
 	interfaceRect.setPosition(tempPos1);
 	tempPos1.x += 60; tempPos1.y += 40;
@@ -58,6 +57,10 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
 	shapeInit(withdrawBox, RECT_COLOR, tempPos2, 1, OUTLINE_COLOR);
 	tempPos2.y += 80;
 	shapeInit(generateRaportBox, RECT_COLOR, tempPos2, 1, OUTLINE_COLOR);
+}
+
+void BankInterface::showInterface(sf::RenderWindow& window) {
+	setInterface();
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {

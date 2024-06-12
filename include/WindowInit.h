@@ -68,7 +68,7 @@ protected:
     sf::RenderWindow window;
     sf::RectangleShape dimRect;
 };
-
+// wywalic potem friendow
 class MenuInit {
 public:
     MenuInit(sf::Font&);
