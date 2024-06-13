@@ -5,7 +5,9 @@
 #include "../include/createEntries.h"
 #include "../include/WindowInit.h"
 #include "../include/ATM.h"
-
+/*
+	Kopia jakby miala sie wydarzyc tragedia.
+*/
 int main() {
 	sf::Font font;
 	if (!font.loadFromFile(FONT_PATH)) {
