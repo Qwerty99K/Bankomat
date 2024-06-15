@@ -2,10 +2,9 @@
 #include <iostream>
 #include <sqlite3.h>
 #include "../include/StandardAccount.h"
-//#include "../include/sqlite_use.h"
+#include "../include/WindowInit.h"
 
-class ATM
-{
+class ATM {
 private:
     int five_hundred;
     int two_hundred;
@@ -22,14 +21,11 @@ public:
     ~ATM();
     void show_money();
     void welcome_screen();
-    void create_account();
     void login();
     void transfer(std::string sender_username, std::string recipient_username, double amount);
-    void withdraw(const std::string& username);
+    void withdraw(const std::string&);
     void deposit(const std::string& username);
     void check_balance(const std::string& username);
-
-private:
-    int createUser(const std::string& username, const std::string& password);
     bool authenticateUser(const std::string& username, const std::string& password);
+    int createUser(AccountType&, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password);
 };

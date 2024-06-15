@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 #include "../include/WindowInit.h"
+#include "../include/BankInterface.h"
 #include "../include/StandardAccount.h"
 #include "../include/ChildAccount.h"
 #include "../include/SeniorAccount.h"
-#include "../include/createEntries.h"
-#include "../include/BankInterface.h"
+// #include "../include/createEntries.h"
 #include <iostream>
 #include <stdexcept>
 #include <vector>

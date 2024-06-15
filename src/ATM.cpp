@@ -1,4 +1,5 @@
 ﻿#include "../include/ATM.h"
+#include "../include/WindowInit.h"
 
 ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0), ten(0), db(nullptr), users(nullptr) {
     int rc = sqlite3_open("atm.db", &db);
@@ -68,8 +69,12 @@ ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0
 
     // Create users table if it doesn't exist
     const char* create_users_table_sql = "CREATE TABLE IF NOT EXISTS users ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "username TEXT NOT NULL UNIQUE, "
+        "type TEXT NOT NULL, "
+        "name TEXT NOT NULL, "
+        "surname TEXT NOT NULL, "
+        "address TEXT NOT NULL, "
+        "age INTEGER NOT NULL, "
+        "username TEXT NOT NULL PRIMARY KEY, "
         "password TEXT NOT NULL, "
         "balance REAL DEFAULT 0.0);";
 
@@ -105,33 +110,81 @@ void ATM::welcome_screen() {
     std::cout << "(2) Stworz konto" << std::endl;
 }
 
-int ATM::createUser(const std::string& username, const std::string& password) {
-    std::string sql = "INSERT INTO users (username, password) VALUES (?, ?);";
+/*
+
+    const char* create_users_table_sql = "CREATE TABLE IF NOT EXISTS users ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "name TEXT NOT NULL, "
+        "surname TEXT NOT NULL, "
+        "address TEXT NOT NULL, "
+        "age INTEGER NOT NULL, "
+        "username TEXT NOT NULL UNIQUE, "
+        "password TEXT NOT NULL, "
+        "balance REAL DEFAULT 0.0);";
+
+*/
+
+int ATM::createUser(AccountType& accType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password) {
+    // Define the SQL statement with placeholders for each value to be inserted
+
+
+    std::string sql = "INSERT INTO users (type, name, surname, address, age, username, password, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
     sqlite3_stmt* stmt;
 
+    // Prepare the SQL statement
     if (sqlite3_prepare_v2(users, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
         return 1;
     }
 
-    sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_STATIC);
+    std::string accountTypeString;
+    switch (accType) {
+    case AccountType::CHILD_ACCOUNT:
+        accountTypeString = "CHILD";
+    
+    case AccountType::STANDARD_ACCOUNT:
+        accountTypeString = "ADULT";
+  
+    case AccountType::SENIOR_ACCOUNT:
+        accountTypeString = "SENIOR";
+    }
 
-    int stepResult = sqlite3_step(stmt);
-    if (stepResult != SQLITE_DONE) {
-        if (stepResult == SQLITE_CONSTRAINT) {
-            std::cerr << "Error: Username already exists." << std::endl;
-        }
-        else {
-            std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
-        }
+    // Bind the values to the SQL statement
+    if (sqlite3_bind_text(stmt, 1, accountTypeString.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_text(stmt, 2, name.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_text(stmt, 3, surname.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_text(stmt, 4, address.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_int(stmt, 5, age) != SQLITE_OK ||
+        sqlite3_bind_text(stmt, 6, username.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_text(stmt, 7, password.c_str(), -1, SQLITE_STATIC) != SQLITE_OK)
+    {
+
+        std::cerr << "Failed to bind values: " << sqlite3_errmsg(users) << std::endl;
         sqlite3_finalize(stmt);
         return 1;
     }
 
+    // Execute the SQL statement
+    int rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        if (rc == SQLITE_CONSTRAINT) {
+            std::cerr << "Error: Username already exists." << std::endl;
+        }
+        else {
+            std::cerr << "Execution failed: " << sqlite3_errmsg(users) << std::endl;
+        }
+        sqlite3_finalize(stmt);
+        return 1;
+    }
+    else {
+        std::cout << "Inserted value successfully" << std::endl;
+    }
+
+    // Finalize the statement
     sqlite3_finalize(stmt);
     return 0;
 }
+
 
 bool ATM::authenticateUser(const std::string& username, const std::string& password) {
     std::string sql = "SELECT * FROM users WHERE username = ? AND password = ?";
@@ -151,42 +204,6 @@ bool ATM::authenticateUser(const std::string& username, const std::string& passw
     return authenticated;
 }
 
-void ATM::create_account() {
-    std::string username, password;
-    std::cout << "Enter username for registration: ";
-    std::cin >> username;
-    std::cout << "Enter password for registration: ";
-    std::cin >> password;
-
-    if (createUser(username, password) == 0) {
-        std::cout << "User registered successfully!" << std::endl;
-    }
-    else {
-        std::cerr << "User registration failed." << std::endl;
-    }
-
-    char answer;
-    bool flag = false;
-    std::cout << "Czy chcesz sie teraz zalogowac? [T/N]: ";
-    while (flag == false)
-    {
-        std::cin >> answer;
-        if (answer != 'T' && answer != 'N')
-        {
-            std::cout << "Nie wybrano poprawnej opcji. Sprobuj ponownie: ";
-        }
-        else
-        {
-            flag = true;
-        }
-    }
-
-    if (answer == 'T')
-    {
-        login();
-    }
-
-}
 
 void ATM::check_balance(const std::string& username) {
     std::string check_balance_sql = "SELECT balance FROM users WHERE username = ?";

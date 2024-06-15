@@ -4,9 +4,11 @@
 #include "../include/StandardAccount.h"
 #include "../include/ChildAccount.h"
 #include "../include/SeniorAccount.h"
-#include "../include/createEntries.h"
+// #include "../include/createEntries.h"
 #include "../include/BankInterface.h"
+#include "../include/ATM.h"
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -198,14 +200,16 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                     isPasswordActive = true; isLoginActive = false;
                 }
                 else if (loginButtonRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    // znajdz czy sa poprawne jesli sa to przejdz dalej
+                    ATM atmInterface;
                     std::cout << "[DEBUG] Initializing logging..." << std::endl;
-                    if (readEntry(AccountType::STANDARD_ACCOUNT, loginInput, passwordInput)) {
+                    if (atmInterface.authenticateUser(loginInput, passwordInput)) {
                         std::unique_ptr<BankInterface> bank_interface(new BankInterface(this->clsFont, this->loginMenuRect));
                         bank_interface->showInterface(window);
+                        // dalej nie ma jak stworzyc konto -_-
                     }
                     else {
                         std::cout << "[DEBUG] Failed to login" << std::endl;
+                        // stworz okno bledu
                     }
                 }
                 break;
@@ -342,14 +346,14 @@ void RegisterInit::drawRegisterMenu(sf::RenderWindow& window) {
 
 void RegisterInit::setRegisterMenu() {
     shapeInit(registerRect, RECT_COLOR, sf::Vector2f(100, 100), 1, OUTLINE_COLOR);
-
-    shapeInit(childOptionRect, RECT_COLOR, sf::Vector2f(110, 110), 1, OUTLINE_COLOR);
+    
+    shapeInit(childOptionRect, RECT_COLOR, sf::Vector2f(475, 110), 1, OUTLINE_COLOR);
     childAccountIcon.setPosition(545, 200);
     childText.setPosition(530, 400);
     childText.setFillColor(sf::Color::Black);
     childAccountIcon.setScale(CHILD_ACCOUNT_SCALE, CHILD_ACCOUNT_SCALE);
-    
-    shapeInit(standardOptionRect, RECT_COLOR, sf::Vector2f(475, 110), 1, OUTLINE_COLOR);
+ 
+    shapeInit(standardOptionRect, RECT_COLOR, sf::Vector2f(110, 110), 1, OUTLINE_COLOR);
     standardAccountIcon.setPosition(185, 200);
     standardText.setPosition(150, 400);
     standardText.setFillColor(sf::Color::Black);
@@ -414,6 +418,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
     shapeInit(activeAcceptBox, sf::Color::Green, acceptBoxPosition, 1, OUTLINE_COLOR);
     shapeInit(inactiveAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
 
+    // zmienne
     std::string nameInput{ "" };
     std::string lastNameInput{ "" };
     std::string addressInput{ "" };
@@ -529,8 +534,11 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     std::cout << "[DEBUG] Inactive box" << std::endl;
                 }
                 if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
-                    createEntry(selectedAcc, loginInput, passwordInput, nameInput, lastNameInput, addressInput, 100, ageInput);
-                    return;
+                    ATM atmInterface;
+                    if (checkCredentials(selectedAcc, nameInput, lastNameInput, addressInput, ageInput, loginInput, passwordInput)) {
+                        atmInterface.createUser(selectedAcc, nameInput, lastNameInput, addressInput, std::stoi(ageInput), loginInput, passwordInput);
+                        return;
+                    }
                     // tu powinien byc testcase, np wyslanie 1 ze sie udalo i wtedy koniec programu
 
                 }
@@ -643,4 +651,75 @@ RegisterInit::~RegisterInit() {
     std::cout << "[DEBUG] Register exit." << std::endl;
 }
 
+bool RegisterInit::checkCredentials(AccountType selectedAcc, const std::string& nameInput, 
+    const std::string& lastNameInput, const std::string& addressInput, const std::string& ageInput, 
+    const std::string& usernameInput, const std::string& passwordInput) {
+
+    switch (selectedAcc) {
+    case AccountType::STANDARD_ACCOUNT:
+        if (nameInput.length() == 0 || nameInput.length() > 10) {
+            throw std::string("[DEBUG] Name doesn't meet requirements.");
+            return 0;
+        }
+        else if (lastNameInput.length() == 0 || lastNameInput.length() > 10) {
+            throw std::string("[DEBUG] Surname doesn't meet requirements.");
+            return 0;
+        }
+        else if (!(std::stoi(ageInput) >= 18 && std::stoi(ageInput) <= 65)) {
+            throw std::string("[DEBUG] Age doesn't meet requirements.");
+            return 0;
+        }
+        else if (usernameInput.length() == 0 || usernameInput.length() > 10) {
+            throw std::string("[DEBUG] Username doesn't meet requirements.");
+            return 0;
+        }
+        else if (passwordInput.length() == 0 || (passwordInput.length() > 10)) {
+            throw std::string("[DEBUG] Password doesn't meet requirements.");
+            return 0;
+        }
+    case AccountType::CHILD_ACCOUNT:
+        if (nameInput.length() == 0 || nameInput.length() > 10) {
+            throw std::string("[DEBUG] Name doesn't meet requirements.");
+            return 0;
+        }
+        else if (lastNameInput.length() == 0 || lastNameInput.length() > 10) {
+            throw std::string("[DEBUG] Surname doesn't meet requirements.");
+            return 0;
+        }
+        else if (!(std::stoi(ageInput) >= 12 && std::stoi(ageInput) <= 18)) {
+            throw std::string("[DEBUG] Age doesn't meet requirements.");
+            return 0;
+        }
+        else if (usernameInput.length() == 0 || usernameInput.length() > 10) {
+            throw std::string("[DEBUG] Username doesn't meet requirements.");
+            return 0;
+        }
+        else if (passwordInput.length() == 0 || (passwordInput.length() > 10)) {
+            throw std::string("[DEBUG] Password doesn't meet requirements.");
+            return 0;
+        }
+    case AccountType::SENIOR_ACCOUNT:
+        if (nameInput.length() == 0 || nameInput.length() > 10) {
+            throw std::string("[DEBUG] Name doesn't meet requirements.");
+            return 0;
+        }
+        else if (lastNameInput.length() == 0 || lastNameInput.length() > 10) {
+            throw std::string("[DEBUG] Surname doesn't meet requirements.");
+            return 0;
+        }
+        else if (!(std::stoi(ageInput) >= 65 && std::stoi(ageInput) <= 100)) {
+            throw std::string("[DEBUG] Age doesn't meet requirements.");
+            return 0;
+        }
+        else if (usernameInput.length() == 0 || usernameInput.length() > 10) {
+            throw std::string("[DEBUG] Username doesn't meet requirements.");
+            return 0;
+        }
+        else if (passwordInput.length() == 0 || (passwordInput.length() > 10)) {
+            throw std::string("[DEBUG] Password doesn't meet requirements.");
+            return 0;
+        }
+    }
+    return 1;
+}
 // stworzyc klase button, rectangle na bazie sfml, aby uproscic wszystko

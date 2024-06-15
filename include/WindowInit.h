@@ -5,7 +5,9 @@
 #include "../include/StandardAccount.h"
 #include "../include/ChildAccount.h"
 #include "../include/SeniorAccount.h"
-#include "../include/createEntries.h"
+// #include "../include/createEntries.h"
+#include "../include/ATM.h"
+#include <memory>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -52,15 +54,17 @@
 #define REGISTER_BOX_SIZE sf::Vector2f(200, 30)
 #define INTERFACE_BOX_SIZE sf::Vector2f(250, 60)
 
-
+enum class AccountType {
+    STANDARD_ACCOUNT,
+    CHILD_ACCOUNT,
+    SENIOR_ACCOUNT,
+};
 
 void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
 void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
 class WindowInit {
 public:
     WindowInit(sf::Font&);
-    friend void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
-    friend void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
     void menuSiteAccessor();
     ~WindowInit();
 protected:
@@ -72,8 +76,6 @@ protected:
 class MenuInit {
 public:
     MenuInit(sf::Font&);
-    friend void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
-    friend void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
     void loginSiteAccessor(sf::RenderWindow&);
     void registerSiteAccessor(sf::RenderWindow&);
     ~MenuInit();
@@ -99,8 +101,6 @@ class LoginInit {
 public:
     LoginInit(sf::Font& font, sf::RectangleShape& loginMenuRect,
         sf::RectangleShape& loginOptionBox, sf::Text& loginOptionText);
-    friend void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
-    friend void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
     ~LoginInit();
     void drawLoginMenu(sf::RenderWindow&);
     void showLoginMenu(sf::RenderWindow&);
@@ -114,19 +114,19 @@ private:
     sf::Text loginOptionText;
     sf::RectangleShape passwordOptionBox;
     sf::Text passwordOptionText;
-
+    ATM atmInterface;
 };
 
 class RegisterInit {
 public:
     RegisterInit(sf::Font& font);
-    friend void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
-    friend void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
     virtual ~RegisterInit();
     void showRegisterMenu(sf::RenderWindow&);
     void setRegisterMenu();
     void drawRegisterMenu(sf::RenderWindow&);
     void createAccount(sf::RenderWindow&, AccountType);
+    bool checkCredentials(AccountType, const std::string&, const std::string&, 
+        const std::string&, const std::string&, const std::string&, const std::string&);
 private:
     sf::Font clsFont;
     sf::Sprite bgBank;
@@ -147,4 +147,5 @@ private:
     sf::Text standardText;
     sf::Text childText;
     sf::Text seniorText;
+    ATM atmInterface;
 };
