@@ -143,12 +143,13 @@ int ATM::createUser(AccountType accType, const std::string& name, const std::str
     switch (accType) {
     case AccountType::CHILD_ACCOUNT:
         accountTypeString = "CHILD";
-    
+        break;
     case AccountType::STANDARD_ACCOUNT:
         accountTypeString = "ADULT";
-  
+        break;
     case AccountType::SENIOR_ACCOUNT:
         accountTypeString = "SENIOR";
+        break;
     }
 
     // Bind the values to the SQL statement

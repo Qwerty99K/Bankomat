@@ -534,13 +534,19 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     std::cout << "[DEBUG] Inactive box" << std::endl;
                 }
                 if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
-                    ATM atmInterface;
-                    if (checkCredentials(selectedAcc, nameInput, lastNameInput, addressInput, ageInput, loginInput, passwordInput)) {
-                        atmInterface.createUser(selectedAcc, nameInput, lastNameInput, addressInput, std::stoi(ageInput), loginInput, passwordInput);
-                        return;
+                    try {
+                        ATM atmInterface;
+                        if (checkCredentials(selectedAcc, nameInput, lastNameInput, addressInput, ageInput, loginInput, passwordInput)) {
+                            atmInterface.createUser(selectedAcc, nameInput, lastNameInput, addressInput, std::stoi(ageInput), loginInput, passwordInput);
+                            return;
+                        }
                     }
-                    // tu powinien byc testcase, np wyslanie 1 ze sie udalo i wtedy koniec programu
-
+                    catch (std::string& e) {
+                        std::cerr << "[DEBUG] " << e << std::endl;
+                        isAcceptBoxActive = false;
+                        continue;
+                    }
+                    // tu powinien byc testcase, np wyslanie 1 ze sie udalo i wtedy koniec 
                 }
                 break;
             case sf::Event::TextEntered:
@@ -677,6 +683,7 @@ bool RegisterInit::checkCredentials(AccountType selectedAcc, const std::string& 
             throw std::string("[DEBUG] Password doesn't meet requirements.");
             return 0;
         }
+        break;
     case AccountType::CHILD_ACCOUNT:
         if (nameInput.length() == 0 || nameInput.length() > 10) {
             throw std::string("[DEBUG] Name doesn't meet requirements.");
@@ -698,6 +705,7 @@ bool RegisterInit::checkCredentials(AccountType selectedAcc, const std::string& 
             throw std::string("[DEBUG] Password doesn't meet requirements.");
             return 0;
         }
+        break;
     case AccountType::SENIOR_ACCOUNT:
         if (nameInput.length() == 0 || nameInput.length() > 10) {
             throw std::string("[DEBUG] Name doesn't meet requirements.");
@@ -719,6 +727,7 @@ bool RegisterInit::checkCredentials(AccountType selectedAcc, const std::string& 
             throw std::string("[DEBUG] Password doesn't meet requirements.");
             return 0;
         }
+        break;
     }
     return 1;
 }
