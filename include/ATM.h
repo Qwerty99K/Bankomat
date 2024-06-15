@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
 #include <sqlite3.h>
-#include "../include/StandardAccount.h"
+#include "../include/ATM.h"
 #include "../include/WindowInit.h"
+#include "../include/Status.h"
 
 class ATM {
 private:
@@ -27,5 +28,5 @@ public:
     void deposit(const std::string& username);
     void check_balance(const std::string& username);
     bool authenticateUser(const std::string& username, const std::string& password);
-    int createUser(AccountType&, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password);
+    int createUser(AccountType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password);
 };

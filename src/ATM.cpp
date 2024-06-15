@@ -1,6 +1,8 @@
-﻿#include "../include/ATM.h"
+﻿#include <iostream>
+#include <sqlite3.h>
+#include "../include/ATM.h"
 #include "../include/WindowInit.h"
-
+#include "../include/Status.h"
 ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0), ten(0), db(nullptr), users(nullptr) {
     int rc = sqlite3_open("atm.db", &db);
     if (rc) {
@@ -124,7 +126,7 @@ void ATM::welcome_screen() {
 
 */
 
-int ATM::createUser(AccountType& accType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password) {
+int ATM::createUser(AccountType accType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password) {
     // Define the SQL statement with placeholders for each value to be inserted
 
 

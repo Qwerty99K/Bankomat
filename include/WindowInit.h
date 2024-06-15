@@ -5,7 +5,7 @@
 #include "../include/StandardAccount.h"
 #include "../include/ChildAccount.h"
 #include "../include/SeniorAccount.h"
-// #include "../include/createEntries.h"
+#include "../include/Status.h"
 #include "../include/ATM.h"
 #include <memory>
 #include <iostream>
@@ -46,19 +46,11 @@
 #define FONT_PATH "../Bankomat/resources/PtRoot.ttf"
 #define PROFILE_PATH "../Bankomat/resources/textures/user_picture.png"
 
-
-
 #define ACCOUNT_OPTION sf::Vector2f(200, 300)
 #define STANDARD_ACCOUNT_SCALE 0.0215f
 #define CHILD_ACCOUNT_SCALE 0.085f
 #define REGISTER_BOX_SIZE sf::Vector2f(200, 30)
 #define INTERFACE_BOX_SIZE sf::Vector2f(250, 60)
-
-enum class AccountType {
-    STANDARD_ACCOUNT,
-    CHILD_ACCOUNT,
-    SENIOR_ACCOUNT,
-};
 
 void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
 void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
@@ -114,7 +106,6 @@ private:
     sf::Text loginOptionText;
     sf::RectangleShape passwordOptionBox;
     sf::Text passwordOptionText;
-    ATM atmInterface;
 };
 
 class RegisterInit {
@@ -147,5 +138,4 @@ private:
     sf::Text standardText;
     sf::Text childText;
     sf::Text seniorText;
-    ATM atmInterface;
 };
