@@ -153,7 +153,6 @@ LoginInit::LoginInit(sf::Font& font, sf::RectangleShape& loginMenuRect,
 
 
 void LoginInit::showLoginMenu(sf::RenderWindow& window) {
-
     sf::Vector2f loginOptionBoxPos = loginOptionBox.getPosition();
     sf::Vector2f passwordOptionBoxPos = loginOptionBoxPos;
     passwordOptionBoxPos.y += 125;
@@ -202,8 +201,10 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                 else if (loginButtonRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     ATM atmInterface;
                     std::cout << "[DEBUG] Initializing logging..." << std::endl;
+                    std::cout << "[DEBUG] LOGIN: " << loginInput << std::endl;
+                    std::cout << "[DEBUG] PASSWORD: " << passwordInput << std::endl;
                     if (atmInterface.authenticateUser(loginInput, passwordInput)) {
-                        std::unique_ptr<BankInterface> bank_interface(new BankInterface(this->clsFont, this->loginMenuRect));
+                        std::unique_ptr<BankInterface> bank_interface(new BankInterface(this->clsFont, this->loginMenuRect, atmInterface.getUserCredentials(loginInput, passwordInput)));
                         bank_interface->showInterface(window);
                         // dalej nie ma jak stworzyc konto -_-
                     }
@@ -219,7 +220,7 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         loginInput += static_cast<char>(event.text.unicode);
                         userLoginText.setString(loginInput);
-                        std::cout << loginInput;
+
                     }
                     else if (event.text.unicode == 8 && !loginInput.empty()) { // If it's a backspace
                         loginInput.pop_back();
@@ -230,7 +231,7 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         passwordInput += static_cast<char>(event.text.unicode);
                         userPasswordText.setString(passwordInput);
-                        std::cout << passwordInput;
+
                     }
                     else if (event.text.unicode == 8 && !passwordInput.empty()) { // If it's a backspace
                         passwordInput.pop_back();
@@ -535,6 +536,12 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                 }
                 if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
                     try {
+                        std::cout << "[DEBUG] " << nameInput << std::endl;
+                        std::cout << "[DEBUG] " << lastNameInput << std::endl;
+                        std::cout << "[DEBUG] " << addressInput << std::endl;
+                        std::cout << "[DEBUG] " << ageInput << std::endl;
+                        std::cout << "[DEBUG] " << loginInput << std::endl;
+                        std::cout << "[DEBUG] " << passwordInput << std::endl;
                         ATM atmInterface;
                         if (checkCredentials(selectedAcc, nameInput, lastNameInput, addressInput, ageInput, loginInput, passwordInput)) {
                             atmInterface.createUser(selectedAcc, nameInput, lastNameInput, addressInput, std::stoi(ageInput), loginInput, passwordInput);
@@ -554,7 +561,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         nameInput += static_cast<char>(event.text.unicode);
                         name.setString(nameInput);
-                        std::cout << nameInput;
+
                     }
                     else if (event.text.unicode == 8 && !nameInput.empty()) { // If it's a backspace
                         nameInput.pop_back();
@@ -565,7 +572,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         lastNameInput += static_cast<char>(event.text.unicode);
                         lastName.setString(lastNameInput);
-                        std::cout << lastNameInput;
+
                     }
                     else if (event.text.unicode == 8 && !lastNameInput.empty()) { // If it's a backspace
                         lastNameInput.pop_back();
@@ -576,7 +583,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         addressInput += static_cast<char>(event.text.unicode);
                         address.setString(addressInput);
-                        std::cout << addressInput;
+
                     }
                     else if (event.text.unicode == 8 && !addressInput.empty()) { // If it's a backspace
                         addressInput.pop_back();
@@ -587,7 +594,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         ageInput += static_cast<char>(event.text.unicode);
                         age.setString(ageInput);
-                        std::cout << ageInput;
+
                     }
                     else if (event.text.unicode == 8 && !ageInput.empty()) { // If it's a backspace
                         ageInput.pop_back();
@@ -598,7 +605,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         loginInput += static_cast<char>(event.text.unicode);
                         login.setString(loginInput);
-                        std::cout << loginInput;
+
                     }
                     else if (event.text.unicode == 8 && !loginInput.empty()) { // If it's a backspace
                         loginInput.pop_back();
@@ -609,7 +616,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                     if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
                         passwordInput += static_cast<char>(event.text.unicode);
                         password.setString(createAsteriskString(passwordInput));
-                        std::cout << passwordInput;
+
                     }
                     else if (event.text.unicode == 8 && !passwordInput.empty()) { // If it's a backspace
                         passwordInput.pop_back();

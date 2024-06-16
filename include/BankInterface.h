@@ -12,9 +12,10 @@
 #include <stdexcept>
 #include <vector>
 
+
 class BankInterface {
 public:
-    BankInterface(sf::Font&, sf::RectangleShape&);
+    BankInterface(sf::Font&, sf::RectangleShape&, std::vector<std::string>);
     void showInterface(sf::RenderWindow&);
     void drawInterface(sf::RenderWindow&);
     void setInterface();
@@ -35,6 +36,7 @@ private:
 
     sf::RectangleShape nameBox;
     sf::RectangleShape lastNameBox;
+    sf::RectangleShape addressBox;
     sf::RectangleShape ageBox;
     sf::RectangleShape generateRaportBox;
     sf::RectangleShape loginBox;
@@ -44,11 +46,13 @@ private:
 
     sf::Text nameText;
     sf::Text lastNameText;
+    sf::Text addressText;
     sf::Text ageText;
     sf::Text generateRaportText;
     sf::Text loginText;
     sf::Text balanceText;
     sf::Text transferText;
     sf::Text withdrawText;
+    std::vector<std::string> userDetails;
 };
 

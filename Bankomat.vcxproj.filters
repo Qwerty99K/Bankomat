@@ -52,6 +52,8 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include="resources\USERS_DATABASE.db" />
+    <None Include="users.db" />
+    <None Include="atm.db" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\StandardAccount.h">

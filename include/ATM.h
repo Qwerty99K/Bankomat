@@ -5,6 +5,7 @@
 #include "../include/WindowInit.h"
 #include "../include/Status.h"
 
+
 class ATM {
 private:
     int five_hundred;
@@ -16,6 +17,7 @@ private:
     sqlite3* db;    // money database
     sqlite3* users; // users database
     char chosen_option;
+
 
 public:
     ATM();
@@ -29,4 +31,6 @@ public:
     void check_balance(const std::string& username);
     bool authenticateUser(const std::string& username, const std::string& password);
     int createUser(AccountType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password);
+    std::vector<std::string> getUserCredentials(const std::string&, const std::string&);
+
 };

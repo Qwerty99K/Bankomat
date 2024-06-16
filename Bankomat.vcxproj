@@ -169,9 +169,11 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+    <None Include="atm.db" />
     <None Include="packages.config" />
     <None Include="README.md" />
     <None Include="resources\USERS_DATABASE.db" />
+    <None Include="users.db" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BankInterface.h" />

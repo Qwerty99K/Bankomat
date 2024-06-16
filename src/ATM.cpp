@@ -3,6 +3,7 @@
 #include "../include/ATM.h"
 #include "../include/WindowInit.h"
 #include "../include/Status.h"
+
 ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0), ten(0), db(nullptr), users(nullptr) {
     int rc = sqlite3_open("atm.db", &db);
     if (rc) {
@@ -188,7 +189,6 @@ int ATM::createUser(AccountType accType, const std::string& name, const std::str
     return 0;
 }
 
-
 bool ATM::authenticateUser(const std::string& username, const std::string& password) {
     std::string sql = "SELECT * FROM users WHERE username = ? AND password = ?";
     sqlite3_stmt* stmt;
@@ -206,6 +206,51 @@ bool ATM::authenticateUser(const std::string& username, const std::string& passw
     sqlite3_finalize(stmt);
     return authenticated;
 }
+
+
+std::vector<std::string> ATM::getUserCredentials(const std::string& login, const std::string& password) {
+    if (!authenticateUser(login, password)) {
+        throw std::string("Trying to breach the database");
+        return std::vector<std::string>(0);
+    }
+    else {
+        std::string sql = "SELECT type, name, surname, address, age, username, password, balance FROM users WHERE username = ?;";
+        sqlite3_stmt* stmt;
+        if (sqlite3_prepare_v2(users, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+            std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
+            return std::vector<std::string>(0);
+        }
+        std::vector<std::string>userDetails(8);
+        sqlite3_bind_text(stmt, 1, login.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, password.c_str(), -1, SQLITE_STATIC);
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            userDetails[0] = (const char*) sqlite3_column_text(stmt, 0); // type
+            userDetails[1] = (const char*) sqlite3_column_text(stmt, 1); // name
+            userDetails[2] = (const char*) sqlite3_column_text(stmt, 2); // surname
+            userDetails[3] = (const char*) sqlite3_column_text(stmt, 3); // address
+            userDetails[4] = std::to_string(sqlite3_column_int(stmt, 4));                // age
+            userDetails[5] = (const char*) sqlite3_column_text(stmt, 5); // username
+            userDetails[6] = (const char*) sqlite3_column_text(stmt, 6); // password
+            userDetails[7] = std::to_string(sqlite3_column_double(stmt, 7));              // balance
+        }
+        else {
+            std::cerr << "No user found with the given credentials" << std::endl;
+            return std::vector<std::string>(0);
+        }
+        sqlite3_finalize(stmt);
+        return userDetails;
+    }
+}
+
+
+
+
+
+
+
+
+
 
 
 void ATM::check_balance(const std::string& username) {
@@ -401,7 +446,6 @@ void ATM::withdraw(const std::string& username) {
     std::cout << "Withdrawal successful!" << std::endl;
 }
 
-
 void ATM::deposit(const std::string& username) {
     double amount;
     std::cout << "Enter the amount to deposit: ";
@@ -428,7 +472,6 @@ void ATM::deposit(const std::string& username) {
     sqlite3_finalize(stmt);
     std::cout << "Deposit successful!" << std::endl;
 }
-
 
 void ATM::login() {
     std::string username, password;
