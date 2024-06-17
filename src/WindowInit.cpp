@@ -668,6 +668,21 @@ bool RegisterInit::checkCredentials(AccountType selectedAcc, const std::string& 
     const std::string& lastNameInput, const std::string& addressInput, const std::string& ageInput, 
     const std::string& usernameInput, const std::string& passwordInput) {
 
+    int age = -1;
+
+    try {
+        age = std::stoi(ageInput);
+        std::cout << "Wiek: " << age << std::endl;
+    }
+    catch (const std::invalid_argument& e) {
+        std::cout << "W pole wiek nie wpisano liczby." << std::endl;
+        return 0;
+    }
+    catch (const std::out_of_range& e) {
+        std::cout << "Podana liczba jest poza zakresem." << std::endl;
+        return 0;
+    }
+
     switch (selectedAcc) {
     case AccountType::STANDARD_ACCOUNT:
         if (nameInput.length() == 0 || nameInput.length() > 10) {

@@ -14,11 +14,11 @@ BankInterface::BankInterface(sf::Font& clsFont, sf::RectangleShape& interfaceRec
 clsFont(clsFont), interfaceRect(REGISTER_RECT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)), nameBox(INTERFACE_BOX_SIZE),
  userDetails(userDetails), lastNameBox(INTERFACE_BOX_SIZE), ageBox(INTERFACE_BOX_SIZE), addressBox(INTERFACE_BOX_SIZE),
 				   generateRaportBox(INTERFACE_BOX_SIZE), loginBox(INTERFACE_BOX_SIZE), balanceBox(INTERFACE_BOX_SIZE), 
-		transferBox(INTERFACE_BOX_SIZE), withdrawBox(INTERFACE_BOX_SIZE), nameText("IMIE: " + userDetails[1], clsFont, FONT_SIZE),
+		transferBox(INTERFACE_BOX_SIZE), withdrawBox(INTERFACE_BOX_SIZE), depositBox(INTERFACE_BOX_SIZE), nameText("IMIE: " + userDetails[1], clsFont, FONT_SIZE),
 					lastNameText("NAZ: " + userDetails[2], clsFont, FONT_SIZE), addressText("ADRES: " + userDetails[3], clsFont, FONT_SIZE),
 ageText("WIEK: " + userDetails[4], clsFont, FONT_SIZE), loginText("LOGIN: " + userDetails[5], clsFont, FONT_SIZE), balanceText("$: " + userDetails[7], clsFont, FONT_SIZE),
 generateRaportText("GENERUJ RAPORT", clsFont, FONT_SIZE), transferText("TRANSFER", clsFont, FONT_SIZE), 
-withdrawText("WYPLAC", clsFont, FONT_SIZE) {
+withdrawText("WYPLAC", clsFont, FONT_SIZE), depositText("WPLAC", clsFont, FONT_SIZE) {
 	if (!bgBankT.loadFromFile(BACKGROUND_PATH)) {
 		throw std::string("Nothing to load");
 	}
@@ -58,7 +58,8 @@ void BankInterface::setInterface() {
 	shapeInit(ageBox, RECT_COLOR, tempPos1, 1, OUTLINE_COLOR);
 	ageText.setPosition(tempPos1);
 	ageText.setFillColor(sf::Color::Black);
-	sf::Vector2f tempPos2(500, 160);
+
+	sf::Vector2f tempPos2(500, 149);
 	shapeInit(loginBox, RECT_COLOR, tempPos2, 1, OUTLINE_COLOR);
 	loginText.setPosition(tempPos2);
 	loginText.setFillColor(sf::Color::Black);
@@ -75,6 +76,10 @@ void BankInterface::setInterface() {
 	withdrawText.setPosition(tempPos2);
 	withdrawText.setFillColor(sf::Color::Black);
 	tempPos2.y += 80;
+	shapeInit(depositBox, RECT_COLOR, tempPos2, 1, OUTLINE_COLOR);
+	depositText.setPosition(tempPos2);
+	depositText.setFillColor(sf::Color::Black);
+	tempPos2.y += 80;
 	shapeInit(generateRaportBox, RECT_COLOR, tempPos2, 1, OUTLINE_COLOR);
 	generateRaportText.setPosition(tempPos2);
 	generateRaportText.setFillColor(sf::Color::Black);
@@ -89,8 +94,10 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
 	bool isWithdrawActive = false;
 	bool isRaportActive = false;
 	bool isTransferActive = false;
+	bool isDepositActive = false;
 	std::string withdrawAmount = "";
 	std::string transferAmount = "";
+	std::string depositAmount = "";
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -105,17 +112,26 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
 					isWithdrawActive = false; // Activate input mode for withdrawal
 					isRaportActive = true;
 					isTransferActive = false;
+					isDepositActive = false;
 				}
 				else if (withdrawBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
 					isWithdrawActive = true; // Activate input mode for withdrawal
 					isRaportActive = false;
 					isTransferActive = false;
+					isDepositActive = false;
 				}
 				else if (transferBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
 					isWithdrawActive = false; // Activate input mode for withdrawal
 					isRaportActive = false;
 					isTransferActive = true;
+					isDepositActive = false;
 					transferInterface(window);
+				}
+				else if (depositBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+					isWithdrawActive = false; // Activate input mode for withdrawal
+					isRaportActive = false;
+					isTransferActive = false;
+					isDepositActive = true;
 				}
 				break;
 
@@ -170,6 +186,31 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
 					}
 					transferText.setString(transferAmount);
 				}
+				else if (isDepositActive) {
+					if (event.text.unicode == '\b') { // Handle backspace
+						if (!depositAmount.empty()) {
+							depositAmount.pop_back();
+						}
+					}
+					else if (event.text.unicode == '\r') { // Handle enter
+						if (!depositAmount.empty()) {
+							try {
+								double amount = std::stod(depositAmount);
+								atmInterface.transfer(userDetails[5], "someone", amount);
+								depositAmount.clear();
+							}
+							catch (const std::exception& e) {
+								// Handle invalid input
+								std::cerr << "Invalid input: " << e.what() << std::endl;
+							}
+						}
+						isDepositActive = false; // Deactivate input mode
+					}
+					else if (event.text.unicode < 128) { // Handle regular input
+						depositAmount += static_cast<char>(event.text.unicode);
+					}
+					depositText.setString(depositAmount);
+				}
 				break;
 			}
 		}
@@ -180,6 +221,10 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
 		}
 		else if (isTransferActive) {
 			window.draw(transferText);
+		}
+		else if (isDepositActive)
+		{
+			window.draw(depositText);
 		}
 		else {
 			withdrawText.setString("WYPLAC");
@@ -211,6 +256,8 @@ void BankInterface::drawInterface(sf::RenderWindow& window) {
 	window.draw(transferText);
 	window.draw(withdrawBox);
 	window.draw(withdrawText);
+	window.draw(depositBox);
+	window.draw(depositText);
 	window.draw(addressBox);
 	window.draw(addressText);
 
