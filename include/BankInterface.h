@@ -18,11 +18,9 @@ public:
     BankInterface(sf::Font&, sf::RectangleShape&, std::vector<std::string>);
     void showInterface(sf::RenderWindow&);
     void drawInterface(sf::RenderWindow&);
+    void transferInterface(sf::RenderWindow&);
+    void setTransferInterface();
     void setInterface();
-    /*
-    loginMenuRect(loginMenuRect), loginOptionBox(loginOptionBox), loginOptionText(loginOptionText),
-    passwordOptionBox(MENU_RECT_SIZE), passwordOptionText("Haslo", font, FONT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT))
-    */
 
 private:
     sf::Font clsFont;

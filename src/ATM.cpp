@@ -113,20 +113,6 @@ void ATM::welcome_screen() {
     std::cout << "(2) Stworz konto" << std::endl;
 }
 
-/*
-
-    const char* create_users_table_sql = "CREATE TABLE IF NOT EXISTS users ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "name TEXT NOT NULL, "
-        "surname TEXT NOT NULL, "
-        "address TEXT NOT NULL, "
-        "age INTEGER NOT NULL, "
-        "username TEXT NOT NULL UNIQUE, "
-        "password TEXT NOT NULL, "
-        "balance REAL DEFAULT 0.0);";
-
-*/
-
 int ATM::createUser(AccountType accType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password) {
     // Define the SQL statement with placeholders for each value to be inserted
 
@@ -207,7 +193,6 @@ bool ATM::authenticateUser(const std::string& username, const std::string& passw
     return authenticated;
 }
 
-
 std::vector<std::string> ATM::getUserCredentials(const std::string& login, const std::string& password) {
     if (!authenticateUser(login, password)) {
         throw std::string("Trying to breach the database");
@@ -243,17 +228,7 @@ std::vector<std::string> ATM::getUserCredentials(const std::string& login, const
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-void ATM::check_balance(const std::string& username) {
+void ATM::updateBalance(const std::string& username) {
     std::string check_balance_sql = "SELECT balance FROM users WHERE username = ?";
     sqlite3_stmt* stmt;
 
@@ -275,8 +250,6 @@ void ATM::check_balance(const std::string& username) {
     else {
         std::cerr << "Blad: Nie mozna pobrac salda dla uzytkownika " << username << std::endl;
     }
-
-    // Zakończenie zapytania
     sqlite3_finalize(stmt);
 }
 
@@ -378,11 +351,7 @@ void ATM::transfer(std::string sender_username, std::string recipient_username, 
     std::cout << "Przelew w wysokosci " << amount << " zl od " << sender_username << " do " << recipient_username << " zostal pomyslnie zrealizowany." << std::endl;
 }
 
-void ATM::withdraw(const std::string& username) {
-    double amount;
-    std::cout << "Ile chcesz wyplacic: ";
-    std::cin >> amount;
-
+void ATM::withdraw(const std::string& username, double& amount) {
     if (amount <= 0) {
         std::cerr << "Kwota wyplaty musi byc wieksza od 0." << std::endl;
         return;
@@ -473,62 +442,62 @@ void ATM::deposit(const std::string& username) {
     std::cout << "Deposit successful!" << std::endl;
 }
 
-void ATM::login() {
-    std::string username, password;
-    std::cout << "Enter username: ";
-    std::cin >> username;
-    std::cout << "Enter password: ";
-    std::cin >> password;
-
-    if (authenticateUser(username, password)) {
-        char chosen_option;
-        std::cout << "Authentication successful!" << std::endl;
-        std::cout << "Co chcesz zrobic?" << std::endl;
-        std::cout << "(1) Sprawdz saldo" << std::endl;
-        std::cout << "(2) Wyplac pieniadze" << std::endl;
-        std::cout << "(3) Wplac pieniadze" << std::endl;
-        std::cout << "(4) Wykonaj przelew" << std::endl;
-        std::cout << "(5) Generuj raport" << std::endl;
-
-
-        bool flag = false;
-        while (flag == false) {
-            flag = false;
-            std::cin >> chosen_option;
-            if (chosen_option != '1' && chosen_option != '2' && chosen_option != '3' && chosen_option != '4' && chosen_option != '5') {
-                std::cout << "Nie wybrano poprawnej opcji. Sprobuj ponownie: ";
-            }
-            else
-            {
-                if (chosen_option == '1')
-                {
-                    check_balance(username);
-                }
-                else if (chosen_option == '2')
-                {
-                    withdraw(username);
-                }
-                else if (chosen_option == '3')
-                {
-                    deposit(username);
-                }
-                else if (chosen_option == '4')
-                {
-                    std::string transfer_receiver;
-                    double amount_to_transfer;
-                    std::cout << "Podaj nazwe uzytkownika, na konto ktorego chcesz przelac pieniadze: ";
-                    std::cin >> transfer_receiver;
-                    std::cout << "Podaj kwote przelewu: ";
-                    std::cin >> amount_to_transfer; //PAMIETAC O OBSLUDZE WYJATKOW
-
-
-                    //void ATM::transfer(std::string sender_username, std::string recipient_username, double amount) 
-                    transfer(username, transfer_receiver, amount_to_transfer);
-                }
-            }
-        }
-    }
-    else {
-        std::cerr << "Authentication failed." << std::endl;
-    }
-}
+//void ATM::login() {
+//    std::string username, password;
+//    std::cout << "Enter username: ";
+//    std::cin >> username;
+//    std::cout << "Enter password: ";
+//    std::cin >> password;
+//
+//    if (authenticateUser(username, password)) {
+//        char chosen_option;
+//        std::cout << "Authentication successful!" << std::endl;
+//        std::cout << "Co chcesz zrobic?" << std::endl;
+//        std::cout << "(1) Sprawdz saldo" << std::endl;
+//        std::cout << "(2) Wyplac pieniadze" << std::endl;
+//        std::cout << "(3) Wplac pieniadze" << std::endl;
+//        std::cout << "(4) Wykonaj przelew" << std::endl;
+//        std::cout << "(5) Generuj raport" << std::endl;
+//
+//
+//        bool flag = false;
+//        while (flag == false) {
+//            flag = false;
+//            std::cin >> chosen_option;
+//            if (chosen_option != '1' && chosen_option != '2' && chosen_option != '3' && chosen_option != '4' && chosen_option != '5') {
+//                std::cout << "Nie wybrano poprawnej opcji. Sprobuj ponownie: ";
+//            }
+//            else
+//            {
+//                if (chosen_option == '1')
+//                {
+//                    updateBalance(username);
+//                }
+//                else if (chosen_option == '2')
+//                {
+//                    withdraw(username);
+//                }
+//                else if (chosen_option == '3')
+//                {
+//                    deposit(username);
+//                }
+//                else if (chosen_option == '4')
+//                {
+//                    std::string transfer_receiver;
+//                    double amount_to_transfer;
+//                    std::cout << "Podaj nazwe uzytkownika, na konto ktorego chcesz przelac pieniadze: ";
+//                    std::cin >> transfer_receiver;
+//                    std::cout << "Podaj kwote przelewu: ";
+//                    std::cin >> amount_to_transfer; //PAMIETAC O OBSLUDZE WYJATKOW
+//
+//
+//                    //void ATM::transfer(std::string sender_username, std::string recipient_username, double amount) 
+//                    transfer(username, transfer_receiver, amount_to_transfer);
+//                }
+//            }
+//        }
+//    }
+//    else {
+//        std::cerr << "Authentication failed." << std::endl;
+//    }
+//}
