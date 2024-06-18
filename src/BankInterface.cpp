@@ -469,20 +469,8 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
     acceptText.setFillColor(sf::Color::Black);
     acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
 
-
     bool isamountActive = false;
     bool isAcceptBoxActive = false;
-
-
-
-    /*
-    sf::RectangleShape depositBox(REGISTER_BOX_SIZE);
-    sf::RectangleShape amountBox(REGISTER_BOX_SIZE);
-    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE); // activate the terms box
-    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE); // disactive the terms  
-    
-    
-    */
 
     while (window.isOpen()) {
         sf::Event event;
@@ -500,81 +488,56 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
                     isamountActive = true;
                     isAcceptBoxActive = false;
                 }
-                else if (acceptText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                else if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isamountActive = false;
                     isAcceptBoxActive = true;
-                }
-
-                
-                break;
-
-            case sf::Event::TextEntered:
-                if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
-                    char enteredChar = static_cast<char>(event.text.unicode);
-
-                    if (isamountActive) {
-                        amountInput += enteredChar;
-                        amount.setString(amountInput);
-                    }
-                }
-                else if (event.text.unicode == 8) { // If it's a backspace
-
-                    if (isamountActive && !amountInput.empty()) {
-                        amountInput.pop_back();
-                        amount.setString(amountInput);
-                    }
-                }
-                break;
-            }
-            window.clear(sf::Color::White);
-
-           
-            
-            window.draw(amountBox);
-            window.draw(amountText);
-            window.draw(amount);
-
-            switch (event.type) {
-            case sf::Event::MouseButtonPressed:
-                if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
-                    isAcceptBoxActive = true;
-                    std::cout << "probaa" << std::endl;
-                    std::cout << "[DEBUG] Active box" << std::endl;
-                    std::cout << "probaaaaa" << std::endl;
                     try {
                         double amountValue = std::stod(amountInput);
                         atmInterface.deposit(send_us_name, amountValue);
                     }
                     catch (const std::invalid_argument& e) {
                         // Handle conversion error (e.g., invalid input)
-
                     }
                     catch (const std::out_of_range& e) {
                         // Handle conversion error (e.g., number out of range)
-
                     }
                 }
-                else if (inactiveAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
-                    isAcceptBoxActive = false;
-                    std::cout << "[DEBUG] Inactive box" << std::endl;
+                break;
+
+            case sf::Event::TextEntered:
+                if (isamountActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                        char enteredChar = static_cast<char>(event.text.unicode);
+                        amountInput += enteredChar;
+                        amount.setString(amountInput);
+                    }
+                    else if (event.text.unicode == 8 && !amountInput.empty()) { // If it's a backspace
+                        amountInput.pop_back();
+                        amount.setString(amountInput);
+                    }
                 }
+                break;
             }
-
-
-
-            window.draw(acceptText);
-            window.draw(activeAcceptBox);
-            window.draw(inactiveAcceptBox);
-
-
-
-
-
-            window.display();
         }
-    }
 
+        window.clear(sf::Color::White);
+
+        window.draw(amountBox);
+        window.draw(amountText);
+        window.draw(amount);
+
+        window.draw(acceptText);
+        if (isAcceptBoxActive) {
+            window.draw(activeAcceptBox);
+        }
+        else {
+            window.draw(inactiveAcceptBox);
+        }
+
+        window.display();
+    }
 }
+
 
 
 
