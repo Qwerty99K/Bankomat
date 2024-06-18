@@ -18,9 +18,12 @@ public:
     BankInterface(sf::Font&, sf::RectangleShape&, std::vector<std::string>);
     void showInterface(sf::RenderWindow&);
     void drawInterface(sf::RenderWindow&);
-    void transferInterface(sf::RenderWindow&);
+    void transferInterface(sf::RenderWindow&, const std::string &sender_user_name);
     void setTransferInterface();
     void setInterface();
+    void reportInterface();
+    void withdrawInterface();
+    void depositInterface(sf::RenderWindow&, const std::string& sender_user_name);
 
 private:
     sf::Font clsFont;
@@ -41,6 +44,7 @@ private:
     sf::RectangleShape balanceBox;
     sf::RectangleShape transferBox;
     sf::RectangleShape withdrawBox;
+    sf::RectangleShape depositBox;
 
     sf::Text nameText;
     sf::Text lastNameText;
@@ -51,6 +55,7 @@ private:
     sf::Text balanceText;
     sf::Text transferText;
     sf::Text withdrawText;
+    sf::Text depositText;
     std::vector<std::string> userDetails;
 };
 

@@ -27,9 +27,11 @@ public:
     void login();
     void transfer(std::string sender_username, std::string recipient_username, double amount);
     void withdraw(const std::string& username, double& amount);
-    void deposit(const std::string& username);
+    void deposit(const std::string& username, double amount);
     void updateBalance(const std::string& username);
     bool authenticateUser(const std::string& username, const std::string& password);
     int createUser(AccountType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password);
     std::vector<std::string> getUserCredentials(const std::string&, const std::string&);
+    void generate_report(const std::string& username);
+    void log_transaction(const std::string& username, const std::string& type, double amount);
 };

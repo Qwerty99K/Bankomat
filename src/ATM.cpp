@@ -87,6 +87,21 @@ ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0
         sqlite3_free(err_msg);
         return;
     }
+
+    // Create transactions table if it doesn't exist
+    const char* create_transactions_table_sql = "CREATE TABLE IF NOT EXISTS transactions ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "username TEXT NOT NULL, "
+        "type TEXT NOT NULL, "
+        "amount REAL NOT NULL, "
+        "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);";
+
+    rc = sqlite3_exec(users, create_transactions_table_sql, nullptr, nullptr, &err_msg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << err_msg << std::endl;
+        sqlite3_free(err_msg);
+        return;
+    }
 }
 
 ATM::~ATM() {
@@ -96,6 +111,26 @@ ATM::~ATM() {
     if (users) {
         sqlite3_close(users);
     }
+}
+
+void ATM::log_transaction(const std::string& username, const std::string& type, double amount) {
+    std::string sql = "INSERT INTO transactions (username, type, amount) VALUES (?, ?, ?);";
+    sqlite3_stmt* stmt;
+
+    if (sqlite3_prepare_v2(users, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, type.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 3, amount);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        std::cerr << "Failed to log transaction: " << sqlite3_errmsg(users) << std::endl;
+    }
+
+    sqlite3_finalize(stmt);
 }
 
 void ATM::show_money() {
@@ -146,7 +181,8 @@ int ATM::createUser(AccountType accType, const std::string& name, const std::str
         sqlite3_bind_text(stmt, 4, address.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
         sqlite3_bind_int(stmt, 5, age) != SQLITE_OK ||
         sqlite3_bind_text(stmt, 6, username.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
-        sqlite3_bind_text(stmt, 7, password.c_str(), -1, SQLITE_STATIC) != SQLITE_OK)
+        sqlite3_bind_text(stmt, 7, password.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
+        sqlite3_bind_double(stmt, 8, 0.0) != SQLITE_OK)
     {
 
         std::cerr << "Failed to bind values: " << sqlite3_errmsg(users) << std::endl;
@@ -254,6 +290,9 @@ void ATM::updateBalance(const std::string& username) {
 }
 
 void ATM::transfer(std::string sender_username, std::string recipient_username, double amount) {
+
+    std::cout << sender_username << " " << recipient_username << " " << amount << std::endl;
+
     if (amount <= 0) {
         std::cerr << "Kwota przelewu musi byc wieksza niz zero." << std::endl;
         return;
@@ -348,6 +387,9 @@ void ATM::transfer(std::string sender_username, std::string recipient_username, 
     // Zakończenie transakcji
     sqlite3_exec(users, "COMMIT;", nullptr, nullptr, nullptr);
 
+    log_transaction(sender_username, "transfer out", amount);
+    log_transaction(recipient_username, "transfer in", amount);
+
     std::cout << "Przelew w wysokosci " << amount << " zl od " << sender_username << " do " << recipient_username << " zostal pomyslnie zrealizowany." << std::endl;
 }
 
@@ -412,13 +454,13 @@ void ATM::withdraw(const std::string& username, double& amount) {
     // Commit transaction
     sqlite3_exec(users, "COMMIT;", nullptr, nullptr, nullptr);
 
+    log_transaction(username, "withdrawal", amount);
+
     std::cout << "Withdrawal successful!" << std::endl;
 }
 
-void ATM::deposit(const std::string& username) {
-    double amount;
-    std::cout << "Enter the amount to deposit: ";
-    std::cin >> amount;
+void ATM::deposit(const std::string& username, double amount) {
+
 
     std::string sql = "UPDATE users SET balance = balance + ? WHERE username = ?";
     sqlite3_stmt* stmt;
@@ -439,8 +481,40 @@ void ATM::deposit(const std::string& username) {
     }
 
     sqlite3_finalize(stmt);
+    log_transaction(username, "deposit", amount);
     std::cout << "Deposit successful!" << std::endl;
 }
+
+
+
+
+void ATM::generate_report(const std::string& username) {
+    std::string sql = "SELECT type, amount, timestamp FROM transactions WHERE username = ? ORDER BY timestamp DESC;";
+    sqlite3_stmt* stmt;
+
+    if (sqlite3_prepare_v2(users, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
+
+    std::cout << "Transaction report for " << username << ":\n";
+    std::cout << "Type\t\tAmount\t\tTimestamp\n";
+    std::cout << "-------------------------------------------\n";
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        std::string type = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        double amount = sqlite3_column_double(stmt, 1);
+        std::string timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+
+        std::cout << type << "\t" << amount << "\t" << timestamp << "\n";
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+
 
 //void ATM::login() {
 //    std::string username, password;
