@@ -120,6 +120,7 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
                     isRaportActive = false;
                     isTransferActive = false;
                     isDepositActive = false;
+                    withdrawInterface(window, userDetails[5]);
                 }
                 else if (transferBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isWithdrawActive = false; // Activate input mode for transfer
@@ -630,6 +631,130 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
         window.draw(acceptText);
 
         window.display();
+    }
+}
+
+
+
+void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::string& send_us_name) {
+    setInterface();
+
+    sf::RectangleShape withdrawBox(REGISTER_BOX_SIZE);
+    sf::RectangleShape amountBox(REGISTER_BOX_SIZE);
+    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE);
+    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE);
+    sf::Vector2f basePosition(180, 180);
+
+    // Initialize withdrawBox
+    sf::Text withdrawText("Wyplata", clsFont, FONT_SIZE);
+    withdrawText.setFillColor(sf::Color::Black);
+    float spacing = 60.f;
+    float shift = 180.f;
+    float baseX = basePosition.x;
+    float baseY = basePosition.y;
+
+    withdrawText.setPosition(baseX, baseY + 4 * spacing);
+    shapeInit(withdrawBox, RECT_COLOR, sf::Vector2f(baseX + shift, baseY + 4 * spacing), 1, OUTLINE_COLOR);
+
+    // Initialize amountBox
+    sf::Text amountText("Kwota", clsFont, FONT_SIZE);
+    amountText.setFillColor(sf::Color::Black);
+
+    amountText.setPosition(baseX, baseY + 5 * spacing);
+    shapeInit(amountBox, RECT_COLOR, sf::Vector2f(baseX + shift, baseY + 5 * spacing), 1, OUTLINE_COLOR);
+
+    // Initialize accept boxes
+    sf::Vector2f acceptBoxPosition(baseX + 650, baseY + 5 * spacing);
+    shapeInit(activeAcceptBox, sf::Color::Green, acceptBoxPosition, 1, OUTLINE_COLOR);
+    shapeInit(inactiveAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
+
+    // Amount input handling
+    std::string amountInput;
+
+    sf::Text amount("", clsFont, FONT_SIZE);
+    amount.setFillColor(sf::Color::Black);
+    amount.setPosition(amountBox.getPosition().x + 5, amountBox.getPosition().y);
+
+    sf::Text acceptText("Potwierdzam wyplate", clsFont, FONT_SIZE);
+    acceptText.setFillColor(sf::Color::Black);
+    acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE);
+
+    bool isAmountActive = false;
+    bool isAcceptBoxActive = false;
+
+    while (window.isOpen()) {
+        sf::Event event;
+        sf::Vector2i mousePos; // Declare mousePos outside the switch block
+        while (window.pollEvent(event)) {
+            switch (event.type) {
+            case sf::Event::Closed:
+                window.close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                mousePos = sf::Mouse::getPosition(window); // Assign value here
+                if (amountBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isAmountActive = true;
+                    isAcceptBoxActive = false;
+                }
+                else if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isAmountActive = false;
+                    isAcceptBoxActive = true;
+                    try {
+                        double amountValue = std::stod(amountInput);
+                        atmInterface.withdraw(send_us_name, amountValue);
+                        // Optionally, add success feedback to the user
+                    }
+                    catch (const std::invalid_argument& e) {
+                        // Handle conversion error
+                        std::cerr << "Invalid input for amount: " << amountInput << std::endl;
+                    }
+                    catch (const std::out_of_range& e) {
+                        // Handle out of range error
+                        std::cerr << "Amount out of range: " << amountInput << std::endl;
+                    }
+                    amountInput.clear(); // Clear input after withdrawal attempt
+                    amount.setString(amountInput);
+                }
+                break;
+
+            case sf::Event::TextEntered:
+                if (isAmountActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // Printable character
+                        char enteredChar = static_cast<char>(event.text.unicode);
+                        if (std::isdigit(enteredChar) || enteredChar == '.') { // Allow digits and optionally a decimal point
+                            amountInput += enteredChar;
+                            amount.setString(amountInput);
+                        }
+                    }
+                    else if (event.text.unicode == 8 && !amountInput.empty()) { // Backspace
+                        amountInput.pop_back();
+                        amount.setString(amountInput);
+                    }
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+
+        window.clear(sf::Color::White);
+
+        window.draw(amountBox);
+        window.draw(amountText);
+        window.draw(amount);
+
+        window.draw(acceptText);
+        if (isAcceptBoxActive) {
+            window.draw(activeAcceptBox);
+        }
+        else {
+            window.draw(inactiveAcceptBox);
+        }
+
+        window.display();
+    
     }
 }
 
