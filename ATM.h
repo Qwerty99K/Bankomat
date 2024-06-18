@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <sqlite3.h>
+#include <sstream>
+#include <iomanip>
 #include "../include/ATM.h"
 #include "../include/WindowInit.h"
 #include "../include/Status.h"
@@ -32,6 +34,6 @@ public:
     bool authenticateUser(const std::string& username, const std::string& password);
     int createUser(AccountType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password);
     std::vector<std::string> getUserCredentials(const std::string&, const std::string&);
-    void generate_report(const std::string& username);
+    std::string generate_report(const std::string& username);
     void log_transaction(const std::string& username, const std::string& type, double amount);
 };

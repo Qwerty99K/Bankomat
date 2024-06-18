@@ -18,12 +18,9 @@ public:
     BankInterface(sf::Font&, sf::RectangleShape&, std::vector<std::string>);
     void showInterface(sf::RenderWindow&);
     void drawInterface(sf::RenderWindow&);
-    void transferInterface(sf::RenderWindow&, const std::string &sender_user_name);
+    void transferInterface(sf::RenderWindow&);
     void setTransferInterface();
     void setInterface();
-    void reportInterface();
-    void withdrawInterface();
-    void depositInterface(sf::RenderWindow&, const std::string& sender_user_name);
 
 private:
     sf::Font clsFont;

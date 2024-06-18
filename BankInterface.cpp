@@ -113,6 +113,7 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
                     isRaportActive = true;
                     isTransferActive = false;
                     isDepositActive = false;
+                    reportInterface(window, userDetails[5]);
                 }
                 else if (withdrawBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isWithdrawActive = true; // Activate input mode for withdrawal
@@ -469,20 +470,8 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
     acceptText.setFillColor(sf::Color::Black);
     acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
 
-
     bool isamountActive = false;
     bool isAcceptBoxActive = false;
-
-
-
-    /*
-    sf::RectangleShape depositBox(REGISTER_BOX_SIZE);
-    sf::RectangleShape amountBox(REGISTER_BOX_SIZE);
-    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE); // activate the terms box
-    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE); // disactive the terms  
-    
-    
-    */
 
     while (window.isOpen()) {
         sf::Event event;
@@ -500,87 +489,154 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
                     isamountActive = true;
                     isAcceptBoxActive = false;
                 }
-                else if (acceptText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                else if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isamountActive = false;
                     isAcceptBoxActive = true;
-                }
-
-                
-                break;
-
-            case sf::Event::TextEntered:
-                if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
-                    char enteredChar = static_cast<char>(event.text.unicode);
-
-                    if (isamountActive) {
-                        amountInput += enteredChar;
-                        amount.setString(amountInput);
-                    }
-                }
-                else if (event.text.unicode == 8) { // If it's a backspace
-
-                    if (isamountActive && !amountInput.empty()) {
-                        amountInput.pop_back();
-                        amount.setString(amountInput);
-                    }
-                }
-                break;
-            }
-            window.clear(sf::Color::White);
-
-           
-            
-            window.draw(amountBox);
-            window.draw(amountText);
-            window.draw(amount);
-
-            switch (event.type) {
-            case sf::Event::MouseButtonPressed:
-                if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
-                    isAcceptBoxActive = true;
-                    std::cout << "probaa" << std::endl;
-                    std::cout << "[DEBUG] Active box" << std::endl;
-                    std::cout << "probaaaaa" << std::endl;
                     try {
                         double amountValue = std::stod(amountInput);
                         atmInterface.deposit(send_us_name, amountValue);
                     }
                     catch (const std::invalid_argument& e) {
                         // Handle conversion error (e.g., invalid input)
-
                     }
                     catch (const std::out_of_range& e) {
                         // Handle conversion error (e.g., number out of range)
-
                     }
                 }
-                else if (inactiveAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)) && isAcceptBoxActive) {
+                break;
+
+            case sf::Event::TextEntered:
+                if (isamountActive) {
+                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                        char enteredChar = static_cast<char>(event.text.unicode);
+                        amountInput += enteredChar;
+                        amount.setString(amountInput);
+                    }
+                    else if (event.text.unicode == 8 && !amountInput.empty()) { // If it's a backspace
+                        amountInput.pop_back();
+                        amount.setString(amountInput);
+                    }
+                }
+                break;
+            }
+        }
+
+        window.clear(sf::Color::White);
+
+        window.draw(amountBox);
+        window.draw(amountText);
+        window.draw(amount);
+
+        window.draw(acceptText);
+        if (isAcceptBoxActive) {
+            window.draw(activeAcceptBox);
+        }
+        else {
+            window.draw(inactiveAcceptBox);
+        }
+
+        window.display();
+    }
+}
+
+
+
+
+
+
+void BankInterface::reportInterface(sf::RenderWindow& window, const std::string& send_us_name) {
+    setInterface();
+
+    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE);
+    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE);
+
+    sf::Vector2f basePosition(50, 50); // Adjusted to move text higher
+
+    float spacing = 30.f; // Adjusted spacing
+    float shift = 0.f; // No horizontal shift needed now
+    float baseX = basePosition.x;
+    float baseY = basePosition.y;
+
+    sf::Vector2f acceptBoxPosition(window.getSize().x - 150, window.getSize().y - 100); // Position near bottom right corner
+
+    sf::Text acceptText("KONIEC", clsFont, FONT_SIZE);
+    acceptText.setFillColor(sf::Color::Black);
+    acceptText.setPosition(acceptBoxPosition.x, acceptBoxPosition.y - FONT_SIZE); // Adjusted position of the "KONIEC" button text
+
+    bool isAcceptBoxActive = false;
+
+    // Generate the report
+    ATM atm;
+    std::string report = atm.generate_report(send_us_name);
+
+    // Split the report into lines
+    std::vector<std::string> reportLines;
+    std::istringstream reportStream(report);
+    std::string line;
+    while (std::getline(reportStream, line)) {
+        reportLines.push_back(line);
+    }
+
+    std::vector<sf::Text> reportTextLines;
+    for (size_t i = 0; i < reportLines.size(); ++i) {
+        sf::Text textLine;
+        textLine.setFont(clsFont);
+        textLine.setString(reportLines[i]);
+        textLine.setCharacterSize(FONT_SIZE);
+        textLine.setFillColor(sf::Color::Black);
+        textLine.setPosition(baseX + shift, baseY + i * (FONT_SIZE + 5)); // Adjusted line spacing
+        reportTextLines.push_back(textLine);
+    }
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+            switch (event.type) {
+            case sf::Event::Closed:
+                window.close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isAcceptBoxActive = true;
+                    std::cout << "[DEBUG] Active box" << std::endl;
+                }
+                else if (inactiveAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isAcceptBoxActive = false;
                     std::cout << "[DEBUG] Inactive box" << std::endl;
                 }
+                else if (isAcceptBoxActive) {
+                    try {
+                        std::cout << "[DEBUG] OK" << std::endl;
+                    }
+                    catch (std::string& e) {
+                        std::cerr << "[DEBUG] " << e << std::endl;
+                        isAcceptBoxActive = false;
+                        continue;
+                    }
+                }
+                break;
             }
-
-
-
-            window.draw(acceptText);
-            window.draw(activeAcceptBox);
-            window.draw(inactiveAcceptBox);
-
-
-
-
-
-            window.display();
         }
+
+        window.clear(sf::Color::White);
+
+        for (const auto& textLine : reportTextLines) {
+            window.draw(textLine);
+        }
+
+        window.draw(acceptText);
+
+        window.display();
     }
-
 }
 
 
 
 
 
-void BankInterface::reportInterface()
-{
 
-}
+
+
