@@ -113,6 +113,7 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
                     isRaportActive = true;
                     isTransferActive = false;
                     isDepositActive = false;
+                    reportInterface(window, userDetails[5]);
                 }
                 else if (withdrawBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isWithdrawActive = true; // Activate input mode for withdrawal
@@ -543,7 +544,99 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
 
 
 
-void BankInterface::reportInterface()
-{
+void BankInterface::reportInterface(sf::RenderWindow& window, const std::string& send_us_name) {
+    setInterface();
 
+    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE);
+    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE);
+
+    sf::Vector2f basePosition(50, 50); // Adjusted to move text higher
+
+    float spacing = 30.f; // Adjusted spacing
+    float shift = 0.f; // No horizontal shift needed now
+    float baseX = basePosition.x;
+    float baseY = basePosition.y;
+
+    sf::Vector2f acceptBoxPosition(window.getSize().x - 150, window.getSize().y - 100); // Position near bottom right corner
+
+    sf::Text acceptText("KONIEC", clsFont, FONT_SIZE);
+    acceptText.setFillColor(sf::Color::Black);
+    acceptText.setPosition(acceptBoxPosition.x, acceptBoxPosition.y - FONT_SIZE); // Adjusted position of the "KONIEC" button text
+
+    bool isAcceptBoxActive = false;
+
+    // Generate the report
+    ATM atm;
+    std::string report = atm.generate_report(send_us_name);
+
+    // Split the report into lines
+    std::vector<std::string> reportLines;
+    std::istringstream reportStream(report);
+    std::string line;
+    while (std::getline(reportStream, line)) {
+        reportLines.push_back(line);
+    }
+
+    std::vector<sf::Text> reportTextLines;
+    for (size_t i = 0; i < reportLines.size(); ++i) {
+        sf::Text textLine;
+        textLine.setFont(clsFont);
+        textLine.setString(reportLines[i]);
+        textLine.setCharacterSize(FONT_SIZE);
+        textLine.setFillColor(sf::Color::Black);
+        textLine.setPosition(baseX + shift, baseY + i * (FONT_SIZE + 5)); // Adjusted line spacing
+        reportTextLines.push_back(textLine);
+    }
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+            switch (event.type) {
+            case sf::Event::Closed:
+                window.close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                if (activeAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isAcceptBoxActive = true;
+                    std::cout << "[DEBUG] Active box" << std::endl;
+                }
+                else if (inactiveAcceptBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                    isAcceptBoxActive = false;
+                    std::cout << "[DEBUG] Inactive box" << std::endl;
+                }
+                else if (isAcceptBoxActive) {
+                    try {
+                        std::cout << "[DEBUG] OK" << std::endl;
+                    }
+                    catch (std::string& e) {
+                        std::cerr << "[DEBUG] " << e << std::endl;
+                        isAcceptBoxActive = false;
+                        continue;
+                    }
+                }
+                break;
+            }
+        }
+
+        window.clear(sf::Color::White);
+
+        for (const auto& textLine : reportTextLines) {
+            window.draw(textLine);
+        }
+
+        window.draw(acceptText);
+
+        window.display();
+    }
 }
+
+
+
+
+
+
+
+

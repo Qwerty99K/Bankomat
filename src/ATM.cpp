@@ -488,32 +488,37 @@ void ATM::deposit(const std::string& username, double amount) {
 
 
 
-void ATM::generate_report(const std::string& username) {
+std::string ATM::generate_report(const std::string& username) {
     std::string sql = "SELECT type, amount, timestamp FROM transactions WHERE username = ? ORDER BY timestamp DESC;";
     sqlite3_stmt* stmt;
 
     if (sqlite3_prepare_v2(users, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
-        return;
+        return "";
     }
 
     sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
 
-    std::cout << "Transaction report for " << username << ":\n";
-    std::cout << "Type\t\tAmount\t\tTimestamp\n";
-    std::cout << "-------------------------------------------\n";
+    std::ostringstream report;
+    report << "Transaction report for " << username << ":\n";
+    report << "Type\t\tAmount\t\tTimestamp\n";
+    report << "-------------------------------------------\n";
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         std::string type = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
         double amount = sqlite3_column_double(stmt, 1);
         std::string timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
 
-        std::cout << type << "\t" << amount << "\t" << timestamp << "\n";
+        // Format the amount to 2 decimal places
+        std::ostringstream amountStream;
+        amountStream << std::fixed << std::setprecision(2) << amount;
+
+        report << type << "\t" << amountStream.str() << "\t" << timestamp << "\n";
     }
 
     sqlite3_finalize(stmt);
+    return report.str();
 }
-
 
 
 //void ATM::login() {

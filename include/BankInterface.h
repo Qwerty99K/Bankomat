@@ -11,6 +11,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <sstream>
+#include <string>
+#include <iomanip>
 
 
 class BankInterface {
@@ -21,7 +24,7 @@ public:
     void transferInterface(sf::RenderWindow&, const std::string &sender_user_name);
     void setTransferInterface();
     void setInterface();
-    void reportInterface();
+    void reportInterface(sf::RenderWindow&, const std::string& sender_user_name);
     void withdrawInterface();
     void depositInterface(sf::RenderWindow&, const std::string& sender_user_name);
 
