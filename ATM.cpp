@@ -79,7 +79,7 @@ ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0
         "age INTEGER NOT NULL, "
         "username TEXT NOT NULL PRIMARY KEY, "
         "password TEXT NOT NULL, "
-        "balance REAL NOT NULL DEFAULT 0.0);";
+        "balance REAL DEFAULT 0.0);";
 
     rc = sqlite3_exec(users, create_users_table_sql, nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
