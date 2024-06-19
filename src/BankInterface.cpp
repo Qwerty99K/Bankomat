@@ -9,6 +9,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+ATM atmInterface;
 
 bool isValidInput(const std::string& input) {
     // Find the position of the decimal point
@@ -22,7 +23,6 @@ bool isValidInput(const std::string& input) {
     std::string decimalPart = input.substr(decimalPos + 1);
     return decimalPart.size() <= 2;
 }
-
 BankInterface::BankInterface(sf::Font& clsFont, sf::RectangleShape& interfaceRect, std::vector<std::string> userDetails) :
     clsFont(clsFont), interfaceRect(REGISTER_RECT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)), nameBox(INTERFACE_BOX_SIZE),
     userDetails(userDetails), lastNameBox(INTERFACE_BOX_SIZE), ageBox(INTERFACE_BOX_SIZE), addressBox(INTERFACE_BOX_SIZE),
@@ -31,7 +31,7 @@ BankInterface::BankInterface(sf::Font& clsFont, sf::RectangleShape& interfaceRec
     lastNameText("NAZ: " + userDetails[2], clsFont, FONT_SIZE), addressText("ADRES: " + userDetails[3], clsFont, FONT_SIZE),
     ageText("WIEK: " + userDetails[4], clsFont, FONT_SIZE), loginText("LOGIN: " + userDetails[5], clsFont, FONT_SIZE), balanceText("$: " + userDetails[7], clsFont, FONT_SIZE),
     generateRaportText("GENERUJ RAPORT", clsFont, FONT_SIZE), transferText("TRANSFER", clsFont, FONT_SIZE),
-    withdrawText("WYPLAC", clsFont, FONT_SIZE), depositText("WPLAC", clsFont, FONT_SIZE) {
+    withdrawText("WYPLAC", clsFont, FONT_SIZE), depositText("WPLAC", clsFont, FONT_SIZE), warning(clsFont), granted(clsFont){
     if (!bgBankT.loadFromFile(BACKGROUND_PATH)) {
         throw std::string("Nothing to load");
     }
@@ -44,15 +44,22 @@ BankInterface::BankInterface(sf::Font& clsFont, sf::RectangleShape& interfaceRec
     else {
         profilePictureT.setSmooth(true);
     }
+    if (!(bankTexture.loadFromFile(BANK_ICO_PATH))) {
+        throw std::string("Nothing to load");
+    }
+    else {
+        bankTexture.setSmooth(true);
+    }
 
     bgBank.setTexture(bgBankT);
     bgBank.setScale(BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
     profilePicture.setTexture(profilePictureT);
     profilePicture.setScale(PROFILE_SCALE);
     dimRect.setFillColor(DIM_RECT);
+    bankIcon.setTexture(bankTexture);
+    bankIcon.setScale(BANK_SCALE, BANK_SCALE);
 }
 
-ATM atmInterface;
 
 void BankInterface::setInterface() {
     sf::Vector2f tempPos1(100, 100);
@@ -148,6 +155,10 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
                     isTransferActive = false;
                     isDepositActive = true;
                     depositInterface(window, userDetails[5]);
+                }
+                else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                    std::cout << "[DEBUG] User logged out." << std::endl;
+                    return;
                 }
                 break;
 
@@ -260,8 +271,6 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
     }
 }
 
-
-
 void BankInterface::transferInterface(sf::RenderWindow& window, const std::string& send_us_name) {
     setInterface();
     sf::RectangleShape receiverBox(REGISTER_BOX_SIZE);
@@ -306,8 +315,9 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
 
     sf::Text acceptText("Potwierdzam wykonanie przelewu", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
-    acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
+    acceptText.setPosition(basePosition.x + 500, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
 
+    bankIcon.setPosition(acceptText.getPosition().x - 175, acceptText.getPosition().y - 275);
 
     bool isReceiverActive = false;
     bool isamountActive = false;
@@ -361,6 +371,9 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
                     }
                     // tu powinien byc testcase, np wyslanie 1 ze sie udalo i wtedy koniec 
                 }
+                else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                    return;
+                }
                 break;
 
             case sf::Event::TextEntered:
@@ -388,14 +401,16 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
                 break;
             }
             window.clear(sf::Color::White);
-
-            // Draw the age text
+            window.draw(bgBank);
+            window.draw(dimRect);
+            window.draw(interfaceRect);
             window.draw(receiverBox);    // Draw the userLoginText text
             window.draw(receiverText);
             window.draw(amountBox);
             window.draw(amountText);
             window.draw(receiver);
             window.draw(amount);
+            window.draw(bankIcon);
 
             switch (event.type) {
             case sf::Event::MouseButtonPressed:
@@ -430,25 +445,14 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
                     std::cout << "[DEBUG] Inactive box" << std::endl;
                 }
             }
-
-
-
             window.draw(acceptText);
             window.draw(activeAcceptBox);
             window.draw(inactiveAcceptBox);
-
-
-
-
-
             window.display();
         }
     }
 
 }
-
-
-
 
 void BankInterface::depositInterface(sf::RenderWindow& window, const std::string& send_us_name) {
     setInterface();
@@ -477,7 +481,6 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
     sf::Vector2f acceptBoxPosition(baseX + 650, baseY + 5 * spacing);
     shapeInit(activeAcceptBox, sf::Color::Green, acceptBoxPosition, 1, OUTLINE_COLOR);
     shapeInit(inactiveAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
-
     // zmienne
     std::string amountInput{ "" };
 
@@ -490,7 +493,8 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
 
     sf::Text acceptText("Potwierdzam depozyt", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
-    acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
+    acceptText.setPosition(basePosition.x + 600, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
+    bankIcon.setPosition(acceptText.getPosition().x - 275, acceptText.getPosition().y - 275);
 
     bool isamountActive = false;
     bool isAcceptBoxActive = false;
@@ -537,6 +541,9 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
                         
                     }
                 }
+                else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                    return;
+                }
                 break;
 
             case sf::Event::TextEntered:
@@ -556,12 +563,14 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
         }
 
         window.clear(sf::Color::White);
-
+        window.draw(bgBank);
+        window.draw(dimRect);
+        window.draw(interfaceRect);
         window.draw(amountBox);
         window.draw(amountText);
         window.draw(amount);
-
         window.draw(acceptText);
+        window.draw(bankIcon);
         if (isAcceptBoxActive) {
             window.draw(activeAcceptBox);
         }
@@ -572,11 +581,6 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
         window.display();
     }
 }
-
-
-
-
-
 
 void BankInterface::reportInterface(sf::RenderWindow& window, const std::string& send_us_name) {
     setInterface();
@@ -596,7 +600,7 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
     sf::Text acceptText("KONIEC", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
     acceptText.setPosition(acceptBoxPosition.x, acceptBoxPosition.y - FONT_SIZE); // Adjusted position of the "KONIEC" button text
-
+    bankIcon.setPosition(acceptText.getPosition().x - 275, acceptText.getPosition().y - 275);
     bool isAcceptBoxActive = false;
 
     // Generate the report
@@ -651,6 +655,9 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
                         continue;
                     }
                 }
+                else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                    return;
+                }
                 break;
             }
         }
@@ -660,14 +667,13 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
         for (const auto& textLine : reportTextLines) {
             window.draw(textLine);
         }
-
+        window.draw(dimRect);
+        window.draw(interfaceRect);
         window.draw(acceptText);
 
         window.display();
     }
 }
-
-
 
 void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::string& send_us_name) {
     setInterface();
@@ -761,6 +767,9 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
                     amountInput.clear(); // Clear input after withdrawal attempt
                     amount.setString(amountInput);
                 }
+                else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                    return;
+                }
                 break;
 
             case sf::Event::TextEntered:
@@ -785,11 +794,13 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
         }
 
         window.clear(sf::Color::White);
-
+        window.draw(bgBank);
+        window.draw(dimRect);
+        window.draw(interfaceRect);
         window.draw(amountBox);
         window.draw(amountText);
         window.draw(amount);
-
+        window.draw(bankIcon);
         window.draw(acceptText);
         if (isAcceptBoxActive) {
             window.draw(activeAcceptBox);
@@ -797,9 +808,7 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
         else {
             window.draw(inactiveAcceptBox);
         }
-
         window.display();
-
     }
 }
 

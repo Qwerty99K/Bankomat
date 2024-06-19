@@ -6,7 +6,8 @@
 #include "../include/ATM.h"
 #include "../include/WindowInit.h"
 #include "../include/Status.h"
-
+#define ATM_DATABASE "../Bankomat/resources/atm.db"
+#define USER_DATABASE "../Bankomat/resources/users.db"
 
 class ATM {
 private:

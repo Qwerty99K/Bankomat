@@ -15,8 +15,8 @@
 
 #define WIDTH 1280
 #define HEIGHT 720
-#define MAIN_NAME "Bank Application"
-#define BANK_NAME "My Bank"
+#define MAIN_NAME "Aplikacja banku"
+#define BANK_NAME "Moj bank"
 #define FONT_SIZE 30
 #define REG_GAPS 20
 
@@ -41,7 +41,7 @@
 #define BACKGROUND_PATH "../Bankomat/resources/textures/background.jpg"
 #define STANDARD_ACCOUNT_PATH "../Bankomat/resources/textures/StandardAccText.jpg"
 #define CHILD_ACCOUNT_PATH "../Bankomat/resources/textures/ChildAccText.jpg"
-#define SENIOR_ACCOUNT_PATH "../Bankomat/resources/textures/bank.png"
+#define SENIOR_ACCOUNT_PATH "../Bankomat/resources/textures/StandardAccText.jpg"
 #define BANK_ICO_PATH "../Bankomat/resources/textures/bank.png"
 #define FONT_PATH "../Bankomat/resources/PtRoot.ttf"
 #define PROFILE_PATH "../Bankomat/resources/textures/user_picture.png"
@@ -54,6 +54,26 @@
 
 void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
 void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
+
+class WarningBox {
+public:
+    WarningBox(sf::Font&);
+    inline sf::Text showWarning();
+
+private:
+    sf::Font clsFont;
+    sf::Text warningText;
+};
+
+class GrantedBox {
+public:
+    GrantedBox(sf::Font&);
+    inline sf::Text showGranted();
+private:
+    sf::Font clsFont;
+    sf::Text grantedText;
+};
+
 class WindowInit {
 public:
     WindowInit(sf::Font&);
@@ -87,6 +107,8 @@ private:
     sf::Text registerOptionText;
     sf::RectangleShape exitOptionBox;
     sf::Text exitOptionText;
+    WarningBox warning;
+    GrantedBox granted;
 };
 
 class LoginInit {
@@ -106,6 +128,8 @@ private:
     sf::Text loginOptionText;
     sf::RectangleShape passwordOptionBox;
     sf::Text passwordOptionText;
+    WarningBox warning;
+    GrantedBox granted;
 };
 
 class RegisterInit {
@@ -138,4 +162,7 @@ private:
     sf::Text standardText;
     sf::Text childText;
     sf::Text seniorText;
+    WarningBox warning;
+    GrantedBox granted;
 };
+

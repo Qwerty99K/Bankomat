@@ -5,15 +5,11 @@
 #include "../include/StandardAccount.h"
 #include "../include/ChildAccount.h"
 #include "../include/SeniorAccount.h"
-// #include "../include/createEntries.h"
 #include "../include/ATM.h"
 #include <memory>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
-#include <sstream>
-#include <string>
-#include <iomanip>
 
 
 class BankInterface {
@@ -21,12 +17,13 @@ public:
     BankInterface(sf::Font&, sf::RectangleShape&, std::vector<std::string>);
     void showInterface(sf::RenderWindow&);
     void drawInterface(sf::RenderWindow&);
-    void transferInterface(sf::RenderWindow&, const std::string &sender_user_name);
+    void transferInterface(sf::RenderWindow&, const std::string&);
     void setTransferInterface();
     void setInterface();
-    void reportInterface(sf::RenderWindow&, const std::string& sender_user_name);
-    void withdrawInterface(sf::RenderWindow&, const std::string& sender_user_name);
-    void depositInterface(sf::RenderWindow&, const std::string& sender_user_name);
+    void reportInterface(sf::RenderWindow&, const std::string&);
+    void withdrawInterface(sf::RenderWindow&, const std::string&);
+    void depositInterface(sf::RenderWindow&, const std::string&);
+
 
 private:
     sf::Font clsFont;
@@ -34,6 +31,8 @@ private:
     sf::Texture bgBankT; // load
     sf::Sprite profilePicture; // load
     sf::Texture profilePictureT; // load
+    sf::Sprite bankIcon;
+    sf::Texture bankTexture;
 
     sf::RectangleShape dimRect;
     sf::RectangleShape interfaceRect;
@@ -60,5 +59,8 @@ private:
     sf::Text withdrawText;
     sf::Text depositText;
     std::vector<std::string> userDetails;
+
+    WarningBox warning;
+    GrantedBox granted;
 };
 

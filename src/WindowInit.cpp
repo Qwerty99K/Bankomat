@@ -46,7 +46,7 @@ WindowInit::~WindowInit() {
 
 MenuInit::MenuInit(sf::Font& font) : clsFont(font), bankName(BANK_NAME, font, FONT_SIZE), loginMenuRect(MENU_LOGIN_SIZE), loginOptionBox(MENU_RECT_SIZE),
 loginOptionText("Login", font, FONT_SIZE), registerOptionBox(MENU_RECT_SIZE), registerOptionText("Rejestracja", font, FONT_SIZE),
-exitOptionBox(MENU_RECT_SIZE), exitOptionText("Wyjdz", font, FONT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)) { 
+exitOptionBox(MENU_RECT_SIZE), exitOptionText("Wyjdz", font, FONT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)), warning(clsFont), granted(clsFont) {
     if (!bgBankT.loadFromFile(BACKGROUND_PATH)) {
         throw std::string("Nothing to load.");
     }
@@ -99,6 +99,10 @@ void MenuInit::showMenu(sf::RenderWindow& window) {
                     std::cout << "[DEBUG] App closed" << std::endl;
                     window.close();
                 }
+                else if (!(loginMenuRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                    window.close();
+                    return;
+                }
                 break;
             }
         }
@@ -142,7 +146,7 @@ MenuInit::~MenuInit() {
 LoginInit::LoginInit(sf::Font& font, sf::RectangleShape& loginMenuRect,
     sf::RectangleShape& loginOptionBox, sf::Text& loginOptionText) : clsFont(font),
     loginMenuRect(loginMenuRect), loginOptionBox(loginOptionBox), loginOptionText(loginOptionText),
-    passwordOptionBox(MENU_RECT_SIZE), passwordOptionText("Haslo", font, FONT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)) {
+    passwordOptionBox(MENU_RECT_SIZE), passwordOptionText("Haslo", font, FONT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)), warning(clsFont), granted(clsFont) {
     if (!bgBankT.loadFromFile(BACKGROUND_PATH)) {
         throw std::string("Nothing to load.");
     }
@@ -179,6 +183,7 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
     loginButtonText.setPosition(loginButtonRect.getPosition());
     bool isLoginActive = false;
     bool isPasswordActive = false;
+    bool checkCredentialsFailed = false;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -209,9 +214,13 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                         // dalej nie ma jak stworzyc konto -_-
                     }
                     else {
+                        checkCredentialsFailed = true;
                         std::cout << "[DEBUG] Failed to login" << std::endl;
                         // stworz okno bledu
                     }
+                }
+                else if (!(loginMenuRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                    return;
                 }
                 break;
 
@@ -246,6 +255,9 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
         window.draw(userPasswordText); // Draw the userPasswordText text
         window.draw(loginButtonRect);
         window.draw(loginButtonText);
+        if (checkCredentialsFailed) {
+            window.draw(warning.showWarning());
+        }
         window.display();
     }
 }
@@ -266,8 +278,8 @@ LoginInit::~LoginInit() {
 }
 
 RegisterInit::RegisterInit(sf::Font& font) : clsFont(font), childOptionRect(REGISTER_OPTIONS_SIZE), standardOptionRect(REGISTER_OPTIONS_SIZE), seniorOptionRect(REGISTER_OPTIONS_SIZE),
-    standardText("Konto Standardowe", font, FONT_SIZE), childText("Konto dla dzieci", font, FONT_SIZE),
-    seniorText("Konto dla seniora", font, FONT_SIZE), registerRect(REGISTER_RECT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)) {
+standardText("Konto Standardowe", font, FONT_SIZE), childText("Konto dla dzieci", font, FONT_SIZE),
+seniorText("Konto dla seniora", font, FONT_SIZE), registerRect(REGISTER_RECT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)), warning(clsFont), granted(clsFont) {
     if (!standardAccontIconT.loadFromFile(STANDARD_ACCOUNT_PATH)) {
         throw std::string("Nothing to load.");
     }
@@ -291,7 +303,6 @@ RegisterInit::RegisterInit(sf::Font& font) : clsFont(font), childOptionRect(REGI
     childAccountIcon.setTexture(childAccountIconT);
     bankIcon.setTexture(bankIconT);
     bankIcon.setScale(BANK_SCALE, BANK_SCALE);
-
 }
 
 void RegisterInit::showRegisterMenu(sf::RenderWindow& window) {
@@ -322,6 +333,9 @@ void RegisterInit::showRegisterMenu(sf::RenderWindow& window) {
                     AccountType selectedAccount = AccountType::SENIOR_ACCOUNT;
                     std::cout << "[DEBUG] Senior Account selected" << std::endl;
                     createAccount(window, selectedAccount);
+                    return;
+                }
+                else if (!(registerRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
                     return;
                 }
                 break;
@@ -465,6 +479,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
     bool isAddressActive = false;
     bool isAgeActive = false;
     bool isAcceptBoxActive = false;
+    bool checkCredentialsFailed = false;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -547,13 +562,20 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                             atmInterface.createUser(selectedAcc, nameInput, lastNameInput, addressInput, std::stoi(ageInput), loginInput, passwordInput);
                             return;
                         }
+                        else {
+                            isAcceptBoxActive = false;
+                            checkCredentialsFailed = true;
+                        }
                     }
                     catch (std::string& e) {
                         std::cerr << "[DEBUG] " << e << std::endl;
-                        isAcceptBoxActive = false;
                         continue;
-                    }
+                    } 
+
                     // tu powinien byc testcase, np wyslanie 1 ze sie udalo i wtedy koniec 
+                }
+                else if (!(registerRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                    return;
                 }
                 break;
             case sf::Event::TextEntered:
@@ -651,8 +673,11 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
             if (isAcceptBoxActive) {
                 window.draw(activeAcceptBox);
             }
-            else {
+            else if (!isAcceptBoxActive) {
                 window.draw(inactiveAcceptBox);
+                if (checkCredentialsFailed) {
+                    window.draw(warning.showWarning());
+                }
             }
             window.draw(acceptText);
             window.display();
@@ -754,3 +779,21 @@ bool RegisterInit::checkCredentials(AccountType selectedAcc, const std::string& 
     return 1;
 }
 // stworzyc klase button, rectangle na bazie sfml, aby uproscic wszystko
+
+
+WarningBox::WarningBox(sf::Font& font) : clsFont(font), warningText("Cos poszlo nie tak...", clsFont, FONT_SIZE) {
+    warningText.setFillColor(sf::Color::Red);
+}
+
+inline sf::Text WarningBox::showWarning() {
+    return warningText;
+}
+
+GrantedBox::GrantedBox(sf::Font& font) : clsFont(font), grantedText("Operacja przebiegla pomyslnie", clsFont, FONT_SIZE) {
+    grantedText.setFillColor(sf::Color::Green);
+}
+
+inline sf::Text GrantedBox::showGranted() {
+    return grantedText;
+}
+

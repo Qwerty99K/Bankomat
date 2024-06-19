@@ -21,16 +21,10 @@
     <ClCompile Include="src\sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\createEntries.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\StandardAccount.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SeniorAccount.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tests\assert_values.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ChildAccount.cpp">
@@ -52,8 +46,8 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include="resources\USERS_DATABASE.db" />
-    <None Include="users.db" />
-    <None Include="atm.db" />
+    <None Include="resources\atm.db" />
+    <None Include="resources\users.db" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\StandardAccount.h">
@@ -65,16 +59,7 @@
     <ClInclude Include="include\SeniorAccount.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tests\assert_values.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\importTests.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ChildAccount.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\createEntries.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3.h">
@@ -100,12 +85,6 @@
     <Image Include="resources\textures\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="resources\textures\register_icon.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="resources\textures\login_icon.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="resources\textures\ChildAccText.jpg">
       <Filter>Resource Files</Filter>
     </Image>
@@ -113,6 +92,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="resources\textures\user_picture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\SeniorAccText.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

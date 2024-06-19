@@ -33,10 +33,6 @@ ll StandardAccount::withdraw(const ll& amount) const {
 	}
 }
 
-/*
-	reszta tu
-*/
-
 ll StandardAccount::transferFee() const {
 	return 1.5;
 }

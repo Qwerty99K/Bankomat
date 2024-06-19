@@ -5,13 +5,13 @@
 #include "../include/Status.h"
 
 ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0), ten(0), db(nullptr), users(nullptr) {
-    int rc = sqlite3_open("atm.db", &db);
+    int rc = sqlite3_open(ATM_DATABASE, &db);
     if (rc) {
         std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
 
-    rc = sqlite3_open("users.db", &users);
+    rc = sqlite3_open(USER_DATABASE, &users);
     if (rc) {
         std::cerr << "Can't open users database: " << sqlite3_errmsg(users) << std::endl;
         return;
