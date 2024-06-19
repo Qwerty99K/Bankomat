@@ -597,7 +597,7 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
 
     sf::Vector2f acceptBoxPosition(window.getSize().x - 150, window.getSize().y - 100); // Position near bottom right corner
 
-    sf::Text acceptText("KONIEC", clsFont, FONT_SIZE);
+    sf::Text acceptText("Wyjdz", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
     acceptText.setPosition(acceptBoxPosition.x, acceptBoxPosition.y - FONT_SIZE); // Adjusted position of the "KONIEC" button text
     bankIcon.setPosition(acceptText.getPosition().x - 275, acceptText.getPosition().y - 275);
@@ -655,7 +655,7 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
                         continue;
                     }
                 }
-                else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
+                else if (acceptText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     return;
                 }
                 break;
@@ -663,14 +663,11 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
         }
 
         window.clear(sf::Color::White);
-
         for (const auto& textLine : reportTextLines) {
             window.draw(textLine);
         }
-        window.draw(dimRect);
-        window.draw(interfaceRect);
+        window.draw(activeAcceptBox);
         window.draw(acceptText);
-
         window.display();
     }
 }

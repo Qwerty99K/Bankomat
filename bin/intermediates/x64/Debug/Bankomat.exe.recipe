@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>E:\dev\repos\cpp_proj\Bankomat-clone\bin\x64\Debug\Bankomat.exe</FullPath>
+      <FullPath>E:\dev\repos\cpp_proj\Bankomat\bin\x64\Debug\Bankomat.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
