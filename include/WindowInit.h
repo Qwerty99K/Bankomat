@@ -22,7 +22,6 @@
 
 #define MENU_LOGIN_SIZE sf::Vector2f(300, 350)
 #define SCR_MIDPOINT sf::Vector2f(WIDTH / 2, HEIGHT / 2)
-//#define MENU_LOGIN_SIZE sf::Vector2f(600, 300)
 #define MENU_RECT_SIZE sf::Vector2f(200, 50)
 #define REGISTER_OPTIONS_SIZE sf::Vector2f(340, 500)
 #define REGISTER_RECT_SIZE sf::Vector2f(1080, 520)
@@ -84,7 +83,7 @@ protected:
     sf::RenderWindow window;
     sf::RectangleShape dimRect;
 };
-// wywalic potem friendow
+
 class MenuInit {
 public:
     MenuInit(sf::Font&);
@@ -113,8 +112,8 @@ private:
 
 class LoginInit {
 public:
-    LoginInit(sf::Font& font, sf::RectangleShape& loginMenuRect,
-        sf::RectangleShape& loginOptionBox, sf::Text& loginOptionText);
+    LoginInit(sf::Font&, sf::RectangleShape&,
+        sf::RectangleShape&, sf::Text&);
     ~LoginInit();
     void drawLoginMenu(sf::RenderWindow&);
     void showLoginMenu(sf::RenderWindow&);
@@ -134,7 +133,7 @@ private:
 
 class RegisterInit {
 public:
-    RegisterInit(sf::Font& font);
+    RegisterInit(sf::Font&);
     virtual ~RegisterInit();
     void showRegisterMenu(sf::RenderWindow&);
     void setRegisterMenu();
@@ -147,7 +146,7 @@ private:
     sf::Sprite bgBank;
     sf::Texture bgBankT;
     sf::RectangleShape dimRect;
-    sf::RectangleShape registerRect; // inicjalizacja
+    sf::RectangleShape registerRect;
     sf::Sprite standardAccountIcon;
     sf::Texture standardAccontIconT;
     sf::Sprite childAccountIcon;

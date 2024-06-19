@@ -192,7 +192,6 @@
     <Image Include="resources\textures\user_picture.png" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="resources\NerdFont.ttf" />
     <Font Include="resources\PtRoot.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

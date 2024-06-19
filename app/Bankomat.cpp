@@ -15,3 +15,10 @@ int main() {
 	delete window; window = nullptr;
 	return 0;
 }
+
+/*
+	Wykorzystane materialy:
+	https://www.paratype.com/fonts/pt/pt-root-ui
+	https://www.freepik.com/
+	https://pixabay.com/
+*/

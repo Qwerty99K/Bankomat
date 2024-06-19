@@ -17,7 +17,6 @@ ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0
         return;
     }
 
-    // Create money table if it doesn't exist
     const char* create_table_sql = "CREATE TABLE IF NOT EXISTS atm_table ("
         "id INTEGER PRIMARY KEY, "
         "five_hundred INTEGER, "
@@ -34,7 +33,6 @@ ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0
         return;
     }
 
-    // Insert initial values if table is empty
     const char* insert_initial_values_sql = "INSERT INTO atm_table (id, five_hundred, two_hundred, one_hundred, fifty, twenty, ten) "
         "SELECT 1, 100, 100, 100, 100, 100, 100 "
         "WHERE NOT EXISTS (SELECT 1 FROM atm_table WHERE id = 1);";
@@ -45,7 +43,6 @@ ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0
         return;
     }
 
-    // Retrieve the values from the database
     const char* select_sql = "SELECT five_hundred, two_hundred, one_hundred, fifty, twenty, ten FROM atm_table WHERE id = 1;";
     sqlite3_stmt* stmt;
 
@@ -70,7 +67,6 @@ ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0
 
     sqlite3_finalize(stmt);
 
-    // Create users table if it doesn't exist
     const char* create_users_table_sql = "CREATE TABLE IF NOT EXISTS users ("
         "type TEXT NOT NULL, "
         "name TEXT NOT NULL, "
@@ -88,7 +84,6 @@ ATM::ATM() : five_hundred(0), two_hundred(0), one_hundred(0), fifty(0), twenty(0
         return;
     }
 
-    // Create transactions table if it doesn't exist
     const char* create_transactions_table_sql = "CREATE TABLE IF NOT EXISTS transactions ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
         "username TEXT NOT NULL, "
@@ -149,8 +144,6 @@ void ATM::welcome_screen() {
 }
 
 int ATM::createUser(AccountType accType, const std::string& name, const std::string& surname, const std::string& address, int age, const std::string& username, const std::string& password) {
-    // Define the SQL statement with placeholders for each value to be inserted
-
 
     std::string sql = "INSERT INTO users (type, name, surname, address, age, username, password, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
     sqlite3_stmt* stmt;
@@ -174,7 +167,6 @@ int ATM::createUser(AccountType accType, const std::string& name, const std::str
         break;
     }
 
-    // Bind the values to the SQL statement
     if (sqlite3_bind_text(stmt, 1, accountTypeString.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
         sqlite3_bind_text(stmt, 2, name.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
         sqlite3_bind_text(stmt, 3, surname.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
@@ -190,7 +182,6 @@ int ATM::createUser(AccountType accType, const std::string& name, const std::str
         return 1;
     }
 
-    // Execute the SQL statement
     int rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
         if (rc == SQLITE_CONSTRAINT) {
@@ -206,7 +197,6 @@ int ATM::createUser(AccountType accType, const std::string& name, const std::str
         std::cout << "Inserted value successfully" << std::endl;
     }
 
-    // Finalize the statement
     sqlite3_finalize(stmt);
     return 0;
 }
@@ -268,13 +258,11 @@ void ATM::updateBalance(const std::string& username) {
     std::string check_balance_sql = "SELECT balance FROM users WHERE username = ?";
     sqlite3_stmt* stmt;
 
-    // Przygotowanie zapytania SQL
     if (sqlite3_prepare_v2(users, check_balance_sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
         return;
     }
 
-    // Powiązanie nazwy użytkownika z zapytaniem
     sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
 
     // Wykonanie zapytania
@@ -298,13 +286,11 @@ void ATM::transfer(std::string sender_username, std::string recipient_username, 
         return;
     }
 
-    // Rozpoczęcie transakcji
     sqlite3_exec(users, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
     std::string check_balance_sql = "SELECT balance FROM users WHERE username = ?";
     sqlite3_stmt* stmt;
 
-    // Sprawdzenie salda nadawcy
     if (sqlite3_prepare_v2(users, check_balance_sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
         sqlite3_exec(users, "ROLLBACK;", nullptr, nullptr, nullptr);
@@ -330,7 +316,6 @@ void ATM::transfer(std::string sender_username, std::string recipient_username, 
         return;
     }
 
-    // Sprawdzenie istnienia odbiorcy
     sqlite3_prepare_v2(users, check_balance_sql.c_str(), -1, &stmt, nullptr);
     sqlite3_bind_text(stmt, 1, recipient_username.c_str(), -1, SQLITE_STATIC);
 
@@ -344,7 +329,6 @@ void ATM::transfer(std::string sender_username, std::string recipient_username, 
 
     sqlite3_finalize(stmt);
 
-    // Aktualizacja salda nadawcy
     std::string update_sender_balance_sql = "UPDATE users SET balance = balance - ? WHERE username = ?";
     if (sqlite3_prepare_v2(users, update_sender_balance_sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
@@ -364,7 +348,6 @@ void ATM::transfer(std::string sender_username, std::string recipient_username, 
 
     sqlite3_finalize(stmt);
 
-    // Aktualizacja salda odbiorcy
     std::string update_recipient_balance_sql = "UPDATE users SET balance = balance + ? WHERE username = ?";
     if (sqlite3_prepare_v2(users, update_recipient_balance_sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
@@ -384,7 +367,6 @@ void ATM::transfer(std::string sender_username, std::string recipient_username, 
 
     sqlite3_finalize(stmt);
 
-    // Zakończenie transakcji
     sqlite3_exec(users, "COMMIT;", nullptr, nullptr, nullptr);
 
     log_transaction(sender_username, "transfer out", amount);
@@ -399,13 +381,11 @@ void ATM::withdraw(const std::string& username, double& amount) {
         return;
     }
 
-    // Begin transaction
     sqlite3_exec(users, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
     std::string check_balance_sql = "SELECT balance FROM users WHERE username = ?";
     sqlite3_stmt* stmt;
 
-    // Check user's balance
     if (sqlite3_prepare_v2(users, check_balance_sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
         sqlite3_exec(users, "ROLLBACK;", nullptr, nullptr, nullptr);
@@ -431,7 +411,6 @@ void ATM::withdraw(const std::string& username, double& amount) {
         return;
     }
 
-    // Update user's balance
     std::string update_balance_sql = "UPDATE users SET balance = balance - ? WHERE username = ?";
     if (sqlite3_prepare_v2(users, update_balance_sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(users) << std::endl;
@@ -451,7 +430,6 @@ void ATM::withdraw(const std::string& username, double& amount) {
 
     sqlite3_finalize(stmt);
 
-    // Commit transaction
     sqlite3_exec(users, "COMMIT;", nullptr, nullptr, nullptr);
 
     log_transaction(username, "withdrawal", amount);
@@ -519,64 +497,3 @@ std::string ATM::generate_report(const std::string& username) {
     sqlite3_finalize(stmt);
     return report.str();
 }
-
-
-//void ATM::login() {
-//    std::string username, password;
-//    std::cout << "Enter username: ";
-//    std::cin >> username;
-//    std::cout << "Enter password: ";
-//    std::cin >> password;
-//
-//    if (authenticateUser(username, password)) {
-//        char chosen_option;
-//        std::cout << "Authentication successful!" << std::endl;
-//        std::cout << "Co chcesz zrobic?" << std::endl;
-//        std::cout << "(1) Sprawdz saldo" << std::endl;
-//        std::cout << "(2) Wyplac pieniadze" << std::endl;
-//        std::cout << "(3) Wplac pieniadze" << std::endl;
-//        std::cout << "(4) Wykonaj przelew" << std::endl;
-//        std::cout << "(5) Generuj raport" << std::endl;
-//
-//
-//        bool flag = false;
-//        while (flag == false) {
-//            flag = false;
-//            std::cin >> chosen_option;
-//            if (chosen_option != '1' && chosen_option != '2' && chosen_option != '3' && chosen_option != '4' && chosen_option != '5') {
-//                std::cout << "Nie wybrano poprawnej opcji. Sprobuj ponownie: ";
-//            }
-//            else
-//            {
-//                if (chosen_option == '1')
-//                {
-//                    updateBalance(username);
-//                }
-//                else if (chosen_option == '2')
-//                {
-//                    withdraw(username);
-//                }
-//                else if (chosen_option == '3')
-//                {
-//                    deposit(username);
-//                }
-//                else if (chosen_option == '4')
-//                {
-//                    std::string transfer_receiver;
-//                    double amount_to_transfer;
-//                    std::cout << "Podaj nazwe uzytkownika, na konto ktorego chcesz przelac pieniadze: ";
-//                    std::cin >> transfer_receiver;
-//                    std::cout << "Podaj kwote przelewu: ";
-//                    std::cin >> amount_to_transfer; //PAMIETAC O OBSLUDZE WYJATKOW
-//
-//
-//                    //void ATM::transfer(std::string sender_username, std::string recipient_username, double amount) 
-//                    transfer(username, transfer_receiver, amount_to_transfer);
-//                }
-//            }
-//        }
-//    }
-//    else {
-//        std::cerr << "Authentication failed." << std::endl;
-//    }
-//}

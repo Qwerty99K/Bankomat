@@ -12,14 +12,11 @@
 ATM atmInterface;
 
 bool isValidInput(const std::string& input) {
-    // Find the position of the decimal point
     size_t decimalPos = input.find('.');
     if (decimalPos == std::string::npos) {
-        // No decimal point found, input should be a whole number
         return true;
     }
 
-    // Check if the input has more than 2 digits after the decimal point
     std::string decimalPart = input.substr(decimalPos + 1);
     return decimalPart.size() <= 2;
 }
@@ -137,28 +134,28 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
 
             case sf::Event::MouseButtonPressed:
                 if (generateRaportBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    isWithdrawActive = false; // Activate input mode for report
+                    isWithdrawActive = false;
                     isRaportActive = true;
                     isTransferActive = false;
                     isDepositActive = false;
                     reportInterface(window, userDetails[5]);
                 }
                 else if (withdrawBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    isWithdrawActive = true; // Activate input mode for withdrawal
+                    isWithdrawActive = true;
                     isRaportActive = false;
                     isTransferActive = false;
                     isDepositActive = false;
                     withdrawInterface(window, userDetails[5]);
                 }
                 else if (transferBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    isWithdrawActive = false; // Activate input mode for transfer
+                    isWithdrawActive = false;
                     isRaportActive = false;
                     isTransferActive = true;
                     isDepositActive = false;
-                    transferInterface(window, userDetails[5]); // Przeka� login u�ytkownika wysy�aj�cego
+                    transferInterface(window, userDetails[5]);
                 }
                 else if (depositBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                    isWithdrawActive = false; // Activate input mode for deposit
+                    isWithdrawActive = false;
                     isRaportActive = false;
                     isTransferActive = false;
                     isDepositActive = true;
@@ -172,12 +169,12 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
 
             case sf::Event::TextEntered:
                 if (isWithdrawActive) {
-                    if (event.text.unicode == '\b') { // Handle backspace
+                    if (event.text.unicode == '\b') {
                         if (!withdrawAmount.empty()) {
                             withdrawAmount.pop_back();
                         }
                     }
-                    else if (event.text.unicode == '\r') { // Handle enter
+                    else if (event.text.unicode == '\r') {
                         if (!withdrawAmount.empty()) {
                             try {
                                 double amount = std::stod(withdrawAmount);
@@ -185,24 +182,23 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
                                 withdrawAmount.clear();
                             }
                             catch (const std::exception& e) {
-                                // Handle invalid input
                                 std::cerr << "Invalid input: " << e.what() << std::endl;
                             }
                         }
-                        isWithdrawActive = false; // Deactivate input mode
+                        isWithdrawActive = false;
                     }
-                    else if (event.text.unicode < 128) { // Handle regular input
+                    else if (event.text.unicode < 128) {
                         withdrawAmount += static_cast<char>(event.text.unicode);
                     }
                     withdrawText.setString(withdrawAmount);
                 }
                 else if (isTransferActive) {
-                    if (event.text.unicode == '\b') { // Handle backspace
+                    if (event.text.unicode == '\b') {
                         if (!transferAmount.empty()) {
                             transferAmount.pop_back();
                         }
                     }
-                    else if (event.text.unicode == '\r') { // Handle enter
+                    else if (event.text.unicode == '\r') {
                         if (!transferAmount.empty()) {
                             try {
                                 double amount = std::stod(transferAmount);
@@ -210,24 +206,23 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
                                 transferAmount.clear();
                             }
                             catch (const std::exception& e) {
-                                // Handle invalid input
                                 std::cerr << "Invalid input: " << e.what() << std::endl;
                             }
                         }
-                        isTransferActive = false; // Deactivate input mode
+                        isTransferActive = false;
                     }
-                    else if (event.text.unicode < 128) { // Handle regular input
+                    else if (event.text.unicode < 128) {
                         transferAmount += static_cast<char>(event.text.unicode);
                     }
                     transferText.setString(transferAmount);
                 }
                 else if (isDepositActive) {
-                    if (event.text.unicode == '\b') { // Handle backspace
+                    if (event.text.unicode == '\b') {
                         if (!depositAmount.empty()) {
                             depositAmount.pop_back();
                         }
                     }
-                    else if (event.text.unicode == '\r') { // Handle enter
+                    else if (event.text.unicode == '\r') {
                         if (!depositAmount.empty()) {
                             try {
                                 double amount = std::stod(depositAmount);
@@ -235,13 +230,12 @@ void BankInterface::showInterface(sf::RenderWindow& window) {
                                 depositAmount.clear();
                             }
                             catch (const std::exception& e) {
-                                // Handle invalid input
                                 std::cerr << "Invalid input: " << e.what() << std::endl;
                             }
                         }
-                        isDepositActive = false; // Deactivate input mode
+                        isDepositActive = false;
                     }
-                    else if (event.text.unicode < 128) { // Handle regular input
+                    else if (event.text.unicode < 128) {
                         depositAmount += static_cast<char>(event.text.unicode);
                     }
                     depositText.setString(depositAmount);
@@ -283,11 +277,10 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
     setInterface();
     sf::RectangleShape receiverBox(REGISTER_BOX_SIZE);
     sf::RectangleShape amountBox(REGISTER_BOX_SIZE);
-    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE); // activate the terms box
-    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE); // disactive the terms   
+    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE);
+    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE);
     sf::Vector2f basePosition(180, 180);
 
-    // Create labels for the boxes
     sf::Text receiverText("Odbiorca", clsFont, FONT_SIZE);
     receiverText.setFillColor(sf::Color::Black);
     sf::Text amountText("Kwota", clsFont, FONT_SIZE);
@@ -307,23 +300,20 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
     shapeInit(activeAcceptBox, sf::Color::Green, acceptBoxPosition, 1, OUTLINE_COLOR);
     shapeInit(inactiveAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
 
-    // zmienne
     std::string receiverInput{ "" };
     std::string amountInput{ "" };
 
-    // Create SFML Text objects for displaying user input
     sf::Text receiver("", clsFont, FONT_SIZE);
     receiver.setFillColor(sf::Color::Black);
     sf::Text amount("", clsFont, FONT_SIZE);
     amount.setFillColor(sf::Color::Black);
 
-    // Position the SFML Text objects
     receiver.setPosition(receiverBox.getPosition().x + 5, receiverBox.getPosition().y);
     amount.setPosition(amountBox.getPosition().x + 5, amountBox.getPosition().y);
 
     sf::Text acceptText("Potwierdzam wykonanie przelewu", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
-    acceptText.setPosition(basePosition.x + 500, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
+    acceptText.setPosition(basePosition.x + 500, basePosition.y + 4 * spacing - FONT_SIZE);
 
     bankIcon.setPosition(acceptText.getPosition().x - 175, acceptText.getPosition().y - 275);
 
@@ -377,7 +367,6 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
                         isAcceptBoxActive = false;
                         continue;
                     }
-                    // tu powinien byc testcase, np wyslanie 1 ze sie udalo i wtedy koniec 
                 }
                 else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
                     return;
@@ -385,7 +374,7 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
                 break;
 
             case sf::Event::TextEntered:
-                if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                if (event.text.unicode < 128 && event.text.unicode != 8) {
                     char enteredChar = static_cast<char>(event.text.unicode);
                     if (isReceiverActive) {
                         receiverInput += enteredChar;
@@ -396,7 +385,7 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
                         amount.setString(amountInput);
                     }
                 }
-                else if (event.text.unicode == 8) { // If it's a backspace
+                else if (event.text.unicode == 8) {
                     if (isReceiverActive && !receiverInput.empty()) {
                         receiverInput.pop_back();
                         receiver.setString(receiverInput);
@@ -412,7 +401,7 @@ void BankInterface::transferInterface(sf::RenderWindow& window, const std::strin
             window.draw(bgBank);
             window.draw(dimRect);
             window.draw(interfaceRect);
-            window.draw(receiverBox);    // Draw the userLoginText text
+            window.draw(receiverBox);
             window.draw(receiverText);
             window.draw(amountBox);
             window.draw(amountText);
@@ -466,11 +455,10 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
     setInterface();
     sf::RectangleShape depositBox(REGISTER_BOX_SIZE);
     sf::RectangleShape amountBox(REGISTER_BOX_SIZE);
-    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE); // activate the terms box
-    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE); // disactive the terms   
+    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE);
+    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE);
     sf::Vector2f basePosition(180, 180);
 
-    // Create labels for the boxes
     sf::Text depositText("Wplata", clsFont, FONT_SIZE);
     depositText.setFillColor(sf::Color::Black);
     sf::Text amountText("Kwota", clsFont, FONT_SIZE);
@@ -489,19 +477,16 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
     sf::Vector2f acceptBoxPosition(baseX + 650, baseY + 5 * spacing);
     shapeInit(activeAcceptBox, sf::Color::Green, acceptBoxPosition, 1, OUTLINE_COLOR);
     shapeInit(inactiveAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
-    // zmienne
     std::string amountInput{ "" };
 
-    // Create SFML Text objects for displaying user input
     sf::Text amount("", clsFont, FONT_SIZE);
     amount.setFillColor(sf::Color::Black);
 
-    // Position the SFML Text objects
     amount.setPosition(amountBox.getPosition().x + 5, amountBox.getPosition().y);
 
     sf::Text acceptText("Potwierdzam depozyt", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
-    acceptText.setPosition(basePosition.x + 600, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
+    acceptText.setPosition(basePosition.x + 600, basePosition.y + 4 * spacing - FONT_SIZE);
     bankIcon.setPosition(acceptText.getPosition().x - 275, acceptText.getPosition().y - 275);
 
     bool isamountActive = false;
@@ -518,8 +503,7 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
                 break;
 
             case sf::Event::MouseButtonPressed:
-                // Check which box is clicked
-                if (amountBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                if (amountBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) { // jesli kliknieto dany przycisk
                     isamountActive = true;
                     isAcceptBoxActive = false;
                 }
@@ -556,12 +540,12 @@ void BankInterface::depositInterface(sf::RenderWindow& window, const std::string
 
             case sf::Event::TextEntered:
                 if (isamountActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         char enteredChar = static_cast<char>(event.text.unicode);
                         amountInput += enteredChar;
                         amount.setString(amountInput);
                     }
-                    else if (event.text.unicode == 8 && !amountInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !amountInput.empty()) {
                         amountInput.pop_back();
                         amount.setString(amountInput);
                     }
@@ -596,26 +580,24 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
     sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE);
     sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE);
 
-    sf::Vector2f basePosition(50, 50); // Adjusted to move text higher
+    sf::Vector2f basePosition(50, 50);
 
-    float spacing = 30.f; // Adjusted spacing
-    float shift = 0.f; // No horizontal shift needed now
+    float spacing = 30.f;
+    float shift = 0.f;
     float baseX = basePosition.x;
     float baseY = basePosition.y;
 
-    sf::Vector2f acceptBoxPosition(window.getSize().x - 150, window.getSize().y - 100); // Position near bottom right corner
+    sf::Vector2f acceptBoxPosition(window.getSize().x - 150, window.getSize().y - 100);
 
     sf::Text acceptText("KONIEC", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
-    acceptText.setPosition(acceptBoxPosition.x, acceptBoxPosition.y - FONT_SIZE); // Adjusted position of the "KONIEC" button text
+    acceptText.setPosition(acceptBoxPosition.x, acceptBoxPosition.y - FONT_SIZE);
     bankIcon.setPosition(acceptText.getPosition().x - 275, acceptText.getPosition().y - 275);
     bool isAcceptBoxActive = false;
 
-    // Generate the report
     ATM atm;
     std::string report = atm.generate_report(send_us_name);
 
-    // Split the report into lines
     std::vector<std::string> reportLines;
     std::istringstream reportStream(report);
     std::string line;
@@ -692,7 +674,6 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
     sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE);
     sf::Vector2f basePosition(180, 180);
 
-    // Initialize withdrawBox
     sf::Text withdrawText("Wyplata", clsFont, FONT_SIZE);
     withdrawText.setFillColor(sf::Color::Black);
     float spacing = 60.f;
@@ -703,19 +684,16 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
     withdrawText.setPosition(baseX, baseY + 4 * spacing);
     shapeInit(withdrawBox, RECT_COLOR, sf::Vector2f(baseX + shift, baseY + 4 * spacing), 1, OUTLINE_COLOR);
 
-    // Initialize amountBox
     sf::Text amountText("Kwota", clsFont, FONT_SIZE);
     amountText.setFillColor(sf::Color::Black);
 
     amountText.setPosition(baseX, baseY + 5 * spacing);
     shapeInit(amountBox, RECT_COLOR, sf::Vector2f(baseX + shift, baseY + 5 * spacing), 1, OUTLINE_COLOR);
 
-    // Initialize accept boxes
     sf::Vector2f acceptBoxPosition(baseX + 650, baseY + 5 * spacing);
     shapeInit(activeAcceptBox, sf::Color::Green, acceptBoxPosition, 1, OUTLINE_COLOR);
     shapeInit(inactiveAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
 
-    // Amount input handling
     std::string amountInput;
 
     sf::Text amount("", clsFont, FONT_SIZE);
@@ -731,7 +709,7 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
 
     while (window.isOpen()) {
         sf::Event event;
-        sf::Vector2i mousePos; // Declare mousePos outside the switch block
+        sf::Vector2i mousePos;
         while (window.pollEvent(event)) {
             switch (event.type) {
             case sf::Event::Closed:
@@ -739,7 +717,7 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
                 break;
 
             case sf::Event::MouseButtonPressed:
-                mousePos = sf::Mouse::getPosition(window); // Assign value here
+                mousePos = sf::Mouse::getPosition(window);
                 if (amountBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isAmountActive = true;
                     isAcceptBoxActive = false;
@@ -762,17 +740,14 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
                         {
                             std::cout << "Invalid input. More than two decimal places " << std::endl;
                         }
-                        // Optionally, add success feedback to the user
                     }
                     catch (const std::invalid_argument& e) {
-                        // Handle conversion error
                         std::cerr << "Invalid input for amount: " << amountInput << std::endl;
                     }
                     catch (const std::out_of_range& e) {
-                        // Handle out of range error
                         std::cerr << "Amount out of range: " << amountInput << std::endl;
                     }
-                    amountInput.clear(); // Clear input after withdrawal attempt
+                    amountInput.clear();
                     amount.setString(amountInput);
                 }
                 else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
@@ -782,14 +757,14 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
 
             case sf::Event::TextEntered:
                 if (isAmountActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // Printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         char enteredChar = static_cast<char>(event.text.unicode);
-                        if (std::isdigit(enteredChar) || enteredChar == '.') { // Allow digits and optionally a decimal point
+                        if (std::isdigit(enteredChar) || enteredChar == '.') {
                             amountInput += enteredChar;
                             amount.setString(amountInput);
                         }
                     }
-                    else if (event.text.unicode == 8 && !amountInput.empty()) { // Backspace
+                    else if (event.text.unicode == 8 && !amountInput.empty()) {
                         amountInput.pop_back();
                         amount.setString(amountInput);
                     }
@@ -819,10 +794,3 @@ void BankInterface::withdrawInterface(sf::RenderWindow& window, const std::strin
         window.display();
     }
 }
-
-
-
-
-
-
-

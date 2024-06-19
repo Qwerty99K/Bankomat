@@ -6,7 +6,6 @@ StandardAccount::StandardAccount(
 	const unsigned int& age, const std::string& log, const std::string& pass) : 
 	name(name), lastName(lName), id(id), address(addr), balance(bal), age(age), 
 	login(log), password(pass) {
-	//constructor zapisze te wszystkie dane? ewentualnie lepszy sposob
 }
 
 ll StandardAccount::getBalance() const {

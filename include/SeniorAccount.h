@@ -8,13 +8,10 @@ class SeniorAccount : public StandardAccount {
 public:
 	SeniorAccount(const std::string&, const std::string&,
 		const std::string&, const std::string&, const ll&,
-		const unsigned int&, const std::string&, const std::string&);	// bedziemy chcieli aby podali wszystko, jeden konstruktor wystarczy
-	ll transferFee() const; // platnosc za transfer kaski	
+		const unsigned int&, const std::string&, const std::string&);
+	ll transferFee() const;
 		
 
 private:
 	static constexpr ll LIMIT{ 300 };
-	// numer konta
-	// zhashowac potem te dane
-	// powiadomienia - zobaczy sie potem, jak bedziemy czytac dane (kazdy przelew daje ping?)
 };

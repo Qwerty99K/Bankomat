@@ -9,11 +9,11 @@ class StandardAccount {
 public:
 	StandardAccount(const std::string&, const std::string&, 
 		const std::string&, const std::string&, const ll&, 
-		const unsigned int&, const std::string&, const std::string&);	// bedziemy chcieli aby podali wszystko, jeden konstruktor wystarczy
+		const unsigned int&, const std::string&, const std::string&);
 	ll getBalance() const;
-	virtual ll deposit(const ll&) const; // nie wiem czy bedziemy robic wirtualne, definicja bo kazda taka sama bedzie?
+	virtual ll deposit(const ll&) const;
 	virtual ll withdraw(const ll&) const;
-	virtual ll transferFee() const; // platnosc za transfer kaski
+	virtual ll transferFee() const;
 
 private:
 	std::string name;
@@ -26,8 +26,4 @@ private:
 
 	mutable std::string login;
 	mutable std::string password;
-
-	// numer konta
-	// zhashowac potem te dane
-	// powiadomienia - zobaczy sie potem, jak bedziemy czytac dane (kazdy przelew daje ping?)
 };

@@ -195,11 +195,9 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                 break;
 
             case sf::Event::MouseButtonPressed:
-                // Check if the userLoginText box is clicked
                 if (loginOptionBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isLoginActive = true; isPasswordActive = false;
                 }
-                // Check if the userPasswordText box is clicked
                 else if (passwordOptionBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isPasswordActive = true; isLoginActive = false;
                 }
@@ -211,12 +209,10 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
                     if (atmInterface.authenticateUser(loginInput, passwordInput)) {
                         std::unique_ptr<BankInterface> bank_interface(new BankInterface(this->clsFont, this->loginMenuRect, atmInterface.getUserCredentials(loginInput, passwordInput)));
                         bank_interface->showInterface(window);
-                        // dalej nie ma jak stworzyc konto -_-
                     }
                     else {
                         checkCredentialsFailed = true;
                         std::cout << "[DEBUG] Failed to login" << std::endl;
-                        // stworz okno bledu
                     }
                 }
                 else if (!(loginMenuRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
@@ -226,23 +222,23 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
 
             case sf::Event::TextEntered:
                 if (isLoginActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         loginInput += static_cast<char>(event.text.unicode);
                         userLoginText.setString(loginInput);
 
                     }
-                    else if (event.text.unicode == 8 && !loginInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !loginInput.empty()) {
                         loginInput.pop_back();
                         userLoginText.setString(loginInput);
                     }
                 }
                 else if (isPasswordActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         passwordInput += static_cast<char>(event.text.unicode);
                         userPasswordText.setString(passwordInput);
 
                     }
-                    else if (event.text.unicode == 8 && !passwordInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !passwordInput.empty()) {
                         passwordInput.pop_back();
                         userPasswordText.setString(passwordInput);
                     }
@@ -251,8 +247,8 @@ void LoginInit::showLoginMenu(sf::RenderWindow& window) {
             }
         }
         drawLoginMenu(window);
-        window.draw(userLoginText);    // Draw the userLoginText text
-        window.draw(userPasswordText); // Draw the userPasswordText text
+        window.draw(userLoginText);  
+        window.draw(userPasswordText); 
         window.draw(loginButtonRect);
         window.draw(loginButtonText);
         if (checkCredentialsFailed) {
@@ -377,8 +373,7 @@ void RegisterInit::setRegisterMenu() {
     shapeInit(seniorOptionRect, RECT_COLOR, sf::Vector2f(840, 110), 1, OUTLINE_COLOR);
     seniorText.setPosition(890, 400);
     seniorText.setFillColor(sf::Color::Black);
-    //loginBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 50);
-    //passwordBox.setPosition(logRectPos.x + buttonSizes.x / 2, logRectPos.y + buttonSizes.y / 2 + 175);
+
 }
 
 void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedAcc) {
@@ -389,11 +384,11 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
     sf::RectangleShape ageBox(REGISTER_BOX_SIZE);
     sf::RectangleShape loginBox(REGISTER_BOX_SIZE);
     sf::RectangleShape passwordBox(REGISTER_BOX_SIZE);
-    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE); // activate the terms box
-    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE); // disactive the terms   
+    sf::RectangleShape activeAcceptBox(REGISTER_BOX_SIZE);
+    sf::RectangleShape inactiveAcceptBox(REGISTER_BOX_SIZE);
     sf::Vector2f basePosition(180, 180);
 
-    // Create labels for the boxes
+
     sf::Text nameText("Imie", clsFont, FONT_SIZE);
     nameText.setFillColor(sf::Color::Black);
     sf::Text lastNameText("Nazwisko", clsFont, FONT_SIZE);
@@ -433,7 +428,6 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
     shapeInit(activeAcceptBox, sf::Color::Green, acceptBoxPosition, 1, OUTLINE_COLOR);
     shapeInit(inactiveAcceptBox, RECT_COLOR, acceptBoxPosition, 1, OUTLINE_COLOR);
 
-    // zmienne
     std::string nameInput{ "" };
     std::string lastNameInput{ "" };
     std::string addressInput{ "" };
@@ -441,7 +435,6 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
     std::string loginInput{ "" };
     std::string passwordInput{ "" };
 
-    // Create SFML Text objects for displaying user input
     sf::Text name("", clsFont, FONT_SIZE);
     name.setFillColor(sf::Color::Black);
     sf::Text lastName("", clsFont, FONT_SIZE);
@@ -455,7 +448,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
     sf::Text password("", clsFont, FONT_SIZE);
     password.setFillColor(sf::Color::Black);
 
-    // Position the SFML Text objects
+
     name.setPosition(nameBox.getPosition().x + 5, nameBox.getPosition().y);
     lastName.setPosition(lastNameBox.getPosition().x + 5, lastNameBox.getPosition().y);
     address.setPosition(addressBox.getPosition().x + 5, addressBox.getPosition().y);
@@ -466,7 +459,7 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
 
     sf::Text acceptText("Akceptuje regulamin banku", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
-    acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE); // Ustawienie pozycji nad activeAcceptBox
+    acceptText.setPosition(basePosition.x + 575, basePosition.y + 4 * spacing - FONT_SIZE);
 
     auto createAsteriskString = [](const std::string& input) {
         return std::string(input.size(), '*');
@@ -492,7 +485,6 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                 break;
 
             case sf::Event::MouseButtonPressed:
-                // Check which box is clicked
                 if (nameBox.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
                     isNameActive = true;
                     isLastNameActive = false;
@@ -571,8 +563,6 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                         std::cerr << "[DEBUG] " << e << std::endl;
                         continue;
                     } 
-
-                    // tu powinien byc testcase, np wyslanie 1 ze sie udalo i wtedy koniec 
                 }
                 else if (!(registerRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
                     return;
@@ -580,67 +570,67 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
                 break;
             case sf::Event::TextEntered:
                 if (isNameActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         nameInput += static_cast<char>(event.text.unicode);
                         name.setString(nameInput);
 
                     }
-                    else if (event.text.unicode == 8 && !nameInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !nameInput.empty()) {
                         nameInput.pop_back();
                         name.setString(nameInput);
                     }
                 }
                 else if (isLastNameActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         lastNameInput += static_cast<char>(event.text.unicode);
                         lastName.setString(lastNameInput);
 
                     }
-                    else if (event.text.unicode == 8 && !lastNameInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !lastNameInput.empty()) {
                         lastNameInput.pop_back();
                         lastName.setString(lastNameInput);
                     }
                 }
                 else if (isAddressActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         addressInput += static_cast<char>(event.text.unicode);
                         address.setString(addressInput);
 
                     }
-                    else if (event.text.unicode == 8 && !addressInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !addressInput.empty()) {
                         addressInput.pop_back();
                         address.setString(addressInput);
                     }
                 }
                 else if (isAgeActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         ageInput += static_cast<char>(event.text.unicode);
                         age.setString(ageInput);
 
                     }
-                    else if (event.text.unicode == 8 && !ageInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !ageInput.empty()) {
                         ageInput.pop_back();
                         age.setString(ageInput);
                     }
                 }
                 else if (isLoginActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         loginInput += static_cast<char>(event.text.unicode);
                         login.setString(loginInput);
 
                     }
-                    else if (event.text.unicode == 8 && !loginInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !loginInput.empty()) {
                         loginInput.pop_back();
                         login.setString(loginInput);
                     }
                 }
                 else if (isPasswordActive) {
-                    if (event.text.unicode < 128 && event.text.unicode != 8) { // If it's a printable character
+                    if (event.text.unicode < 128 && event.text.unicode != 8) {
                         passwordInput += static_cast<char>(event.text.unicode);
                         password.setString(createAsteriskString(passwordInput));
 
                     }
-                    else if (event.text.unicode == 8 && !passwordInput.empty()) { // If it's a backspace
+                    else if (event.text.unicode == 8 && !passwordInput.empty()) {
                         passwordInput.pop_back();
                         password.setString(createAsteriskString(passwordInput));
                     }
@@ -663,12 +653,12 @@ void RegisterInit::createAccount(sf::RenderWindow& window, AccountType selectedA
             window.draw(ageText);
             window.draw(loginText);
             window.draw(passwordText);
-            window.draw(name);     // Draw the name text
-            window.draw(lastName); // Draw the last name text
-            window.draw(address);  // Draw the address text
-            window.draw(age);      // Draw the age text
-            window.draw(login);    // Draw the userLoginText text
-            window.draw(password); // Draw the userPasswordText text
+            window.draw(name);     
+            window.draw(lastName); 
+            window.draw(address);  
+            window.draw(age);      
+            window.draw(login);    
+            window.draw(password); 
             window.draw(bankIcon);
             if (isAcceptBoxActive) {
                 window.draw(activeAcceptBox);
@@ -778,8 +768,6 @@ bool RegisterInit::checkCredentials(AccountType selectedAcc, const std::string& 
     }
     return 1;
 }
-// stworzyc klase button, rectangle na bazie sfml, aby uproscic wszystko
-
 
 WarningBox::WarningBox(sf::Font& font) : clsFont(font), warningText("Cos poszlo nie tak...", clsFont, FONT_SIZE) {
     warningText.setFillColor(sf::Color::Red);

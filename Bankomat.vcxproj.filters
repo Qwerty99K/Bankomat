@@ -98,7 +98,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="resources\NerdFont.ttf" />
     <Font Include="resources\PtRoot.ttf" />
   </ItemGroup>
 </Project>

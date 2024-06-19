@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-enum class AccountType {
+enum class AccountType { // typ kont
 	STANDARD_ACCOUNT,
 	CHILD_ACCOUNT,
 	SENIOR_ACCOUNT,

@@ -27,10 +27,10 @@ public:
 
 private:
     sf::Font clsFont;
-    sf::Sprite bgBank; // load
-    sf::Texture bgBankT; // load
-    sf::Sprite profilePicture; // load
-    sf::Texture profilePictureT; // load
+    sf::Sprite bgBank; 
+    sf::Texture bgBankT; 
+    sf::Sprite profilePicture; 
+    sf::Texture profilePictureT;
     sf::Sprite bankIcon;
     sf::Texture bankTexture;
 
