@@ -1,119 +1,167 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
+#include "../include/WindowInit.h"
+#include "../include/StandardAccount.h"
+#include "../include/ChildAccount.h"
+#include "../include/SeniorAccount.h"
+#include "../include/Status.h"
+#include "../include/ATM.h"
+#include <memory>
+#include <iostream>
+#include <stdexcept>
 #include <vector>
-#define MAIN_NAME "Menu"
-#define BANK_NAME "Bank Slonski"
-#define BANK_ICO_PATH "../Bankomat/resources/textures/bank.png"
-#define BANK_SCALE 0.5f
-#define BANK_POS 25.f
 
-#define FONT_PATH "../Bankomat/resources/PtRoot.ttf"
-
-#define BG_PATH "../Bankomat/resources/textures/background.jpg"
-#define BG_WIDTH_SCALE 0.265f
-#define BG_HEIGHT_SCALE 0.210f
-#define X_NAME_POS 100
 
 #define WIDTH 1280
 #define HEIGHT 720
-
-#define BUTTON_WIDTH 200
-#define BUTTON_HEIGHT 50
-
-#define BGRECT_WIDTH 300
-#define BGRECT_HEIGHT 350
-
+#define MAIN_NAME "Aplikacja banku"
+#define BANK_NAME "Moj bank"
 #define FONT_SIZE 30
-
 #define REG_GAPS 20
 
-#define ST_ACC_SCALE 0.0215f
-#define C_ACC_SCALE 0.085f
+#define MENU_LOGIN_SIZE sf::Vector2f(300, 350)
+#define SCR_MIDPOINT sf::Vector2f(WIDTH / 2, HEIGHT / 2)
+#define MENU_RECT_SIZE sf::Vector2f(200, 50)
+#define REGISTER_OPTIONS_SIZE sf::Vector2f(340, 500)
+#define REGISTER_RECT_SIZE sf::Vector2f(1080, 520)
+#define BACKGROUND_WIDTH 0.265f
+#define BACKGROUND_HEIGHT 0.210f
+#define BANK_SIZE 30
+#define BANK_SCALE 0.5f
+#define BANK_POS 25.f
+#define PROFILE_SCALE sf::Vector2f(0.35, 0.35)
 
+#define RELATIVE_POSITION sf::Vector2f(SCR_MIDPOINT.x - MENU_LOGIN_SIZE.x / 2, SCR_MIDPOINT.y - MENU_LOGIN_SIZE.y / 2)
+#define RECT_COLOR sf::Color::White
+#define OUTLINE_COLOR sf::Color::Black
+#define DIM_RECT sf::Color(0, 0, 0, 150)
 
-#include <SFML/Graphics.hpp>
-#include <SFML/System/Vector2.hpp>
+#define BACKGROUND_PATH "../Bankomat/resources/textures/background.jpg"
+#define STANDARD_ACCOUNT_PATH "../Bankomat/resources/textures/StandardAccText.jpg"
+#define CHILD_ACCOUNT_PATH "../Bankomat/resources/textures/ChildAccText.jpg"
+#define SENIOR_ACCOUNT_PATH "../Bankomat/resources/textures/StandardAccText.jpg"
+#define BANK_ICO_PATH "../Bankomat/resources/textures/bank.png"
+#define FONT_PATH "../Bankomat/resources/PtRoot.ttf"
+#define PROFILE_PATH "../Bankomat/resources/textures/user_picture.png"
+
+#define ACCOUNT_OPTION sf::Vector2f(200, 300)
+#define STANDARD_ACCOUNT_SCALE 0.0215f
+#define CHILD_ACCOUNT_SCALE 0.085f
+#define REGISTER_BOX_SIZE sf::Vector2f(200, 30)
+#define INTERFACE_BOX_SIZE sf::Vector2f(250, 60)
+
+void shapeInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
+void buttonInit(sf::RectangleShape&, const sf::Color&, const sf::Vector2f&, const int&, const sf::Color&);
+
+class WarningBox {
+public:
+    WarningBox(sf::Font&);
+    inline sf::Text showWarning();
+
+private:
+    sf::Font clsFont;
+    sf::Text warningText;
+};
+
+class GrantedBox {
+public:
+    GrantedBox(sf::Font&);
+    inline sf::Text showGranted();
+private:
+    sf::Font clsFont;
+    sf::Text grantedText;
+};
 
 class WindowInit {
 public:
-    WindowInit();
-
-    // Initializes the main menu loop
-    void menuInit();
-
-private:
-    sf::RenderWindow window;
-
-    // Textures and Sprites
-    sf::Texture menuBGTexture;
-    sf::Sprite menuBackground;
-    sf::Texture bankIcoTexture;
-    sf::Sprite bankIco;
-    sf::Vector2u bankIcoSz;
-
-    // Font and Text
+    WindowInit(sf::Font&);
+    void menuSiteAccessor();
+    ~WindowInit();
+protected:
     sf::Font menuFont;
-    sf::Text bankName;
-    sf::Text logText;
-    sf::Text regText;
-    sf::Text exitText;
-    sf::Text passText;
-
-    sf::Text stAccText;
-    sf::Text cAccText;
-    sf::Text seAccText;
-
-    // Shapes
+    sf::RenderWindow window;
     sf::RectangleShape dimRect;
-    sf::RectangleShape regRect;
-    sf::RectangleShape logRect;
-    sf::RectangleShape logButton;
-    sf::RectangleShape regButton;
-    sf::RectangleShape exitButton;
-    sf::RectangleShape loginBox;
-    sf::RectangleShape passwordBox;
-
-    sf::Texture CAccTexture;
-    sf::Sprite CAccIcon;
-    sf::RectangleShape CAccOptionRect;
-
-    sf::Texture StAccTexture;
-    sf::Sprite StAccIcon;
-    sf::RectangleShape StAccOptionRect;
-    
-    sf::Texture SeAccTexture;
-    sf::Sprite SeAccIcon;
-    sf::RectangleShape SeAccOptionRect;
-
-    sf::Texture logTexture;
-    sf::Sprite logIcon;
-
-    sf::Texture regTexture;
-    sf::Sprite regIcon;
-
-    // Initialize functions
-    void TexturesInit();
-    void FontsInit();
-    void ShapesInit();
-    void TextInit();
-    void ButtonInit(sf::RectangleShape& button, const sf::Vector2f& size);
-    void SetText(sf::Text& text, const std::string& str, sf::Color color);
-
-    // Position setting function
-    void setMenuPos();
-
-    // Menu drawing
-    void drawMainMenu();
-    void drawLoginMenu();
-    void drawRegMenu();
-
-    // Additional menu initializers
-    void loginMenuInit();
-    void regMenuInit();
-    void createAccount();
 };
 
+class MenuInit {
+public:
+    MenuInit(sf::Font&);
+    void loginSiteAccessor(sf::RenderWindow&);
+    void registerSiteAccessor(sf::RenderWindow&);
+    ~MenuInit();
+    void setMenu();
+    void drawMenu(sf::RenderWindow&);
+    void showMenu(sf::RenderWindow&);
+private:
+    sf::Font clsFont;
+    sf::Sprite bgBank;
+    sf::Texture bgBankT;
+    sf::RectangleShape dimRect;
+    sf::Text bankName;
+    sf::RectangleShape loginMenuRect;
+    sf::RectangleShape loginOptionBox;
+    sf::Text loginOptionText;
+    sf::RectangleShape registerOptionBox;
+    sf::Text registerOptionText;
+    sf::RectangleShape exitOptionBox;
+    sf::Text exitOptionText;
+    WarningBox warning;
+    GrantedBox granted;
+};
 
-// stworzyc potem z window init kilka klas, rodzielic to wszystko na prostsze klasy.
-// niektore rzeczy nie musza byc inicjalizowane od razu, oszczedzi pamieci
+class LoginInit {
+public:
+    LoginInit(sf::Font&, sf::RectangleShape&,
+        sf::RectangleShape&, sf::Text&);
+    ~LoginInit();
+    void drawLoginMenu(sf::RenderWindow&);
+    void showLoginMenu(sf::RenderWindow&);
+private:
+    sf::Font clsFont;
+    sf::Sprite bgBank;
+    sf::Texture bgBankT;
+    sf::RectangleShape dimRect;
+    sf::RectangleShape loginMenuRect;
+    sf::RectangleShape loginOptionBox;
+    sf::Text loginOptionText;
+    sf::RectangleShape passwordOptionBox;
+    sf::Text passwordOptionText;
+    WarningBox warning;
+    GrantedBox granted;
+};
+
+class RegisterInit {
+public:
+    RegisterInit(sf::Font&);
+    virtual ~RegisterInit();
+    void showRegisterMenu(sf::RenderWindow&);
+    void setRegisterMenu();
+    void drawRegisterMenu(sf::RenderWindow&);
+    void createAccount(sf::RenderWindow&, AccountType);
+    bool checkCredentials(AccountType, const std::string&, const std::string&, 
+        const std::string&, const std::string&, const std::string&, const std::string&);
+private:
+    sf::Font clsFont;
+    sf::Sprite bgBank;
+    sf::Texture bgBankT;
+    sf::RectangleShape dimRect;
+    sf::RectangleShape registerRect;
+    sf::Sprite standardAccountIcon;
+    sf::Texture standardAccontIconT;
+    sf::Sprite childAccountIcon;
+    sf::Texture childAccountIconT;
+    sf::Sprite seniorAccountIcon;
+    sf::Texture seniorAccountIconT;
+    sf::Sprite bankIcon;
+    sf::Texture bankIconT;
+    sf::RectangleShape childOptionRect;
+    sf::RectangleShape standardOptionRect;
+    sf::RectangleShape seniorOptionRect;
+    sf::Text standardText;
+    sf::Text childText;
+    sf::Text seniorText;
+    WarningBox warning;
+    GrantedBox granted;
+};
+

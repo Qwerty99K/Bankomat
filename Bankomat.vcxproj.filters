@@ -21,16 +21,10 @@
     <ClCompile Include="src\sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\sqlite_use.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\StandardAccount.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SeniorAccount.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tests\assert_values.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ChildAccount.cpp">
@@ -39,13 +33,20 @@
     <ClCompile Include="src\WindowInit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ATM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BankInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="README.md" />
-    <None Include="resources\USERS_DATABASE.db" />
+    <None Include="resources\atm.db" />
+    <None Include="resources\users.db" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\StandardAccount.h">
@@ -57,16 +58,7 @@
     <ClInclude Include="include\SeniorAccount.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tests\assert_values.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tests\importTests.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ChildAccount.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\sqlite_use.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="packages\sqlite3_c_plus_plus.1.0.3\build\native\include\sqlite3.h">
@@ -78,6 +70,12 @@
     <ClInclude Include="include\WindowInit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\ATM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BankInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\bank.png">
@@ -86,21 +84,20 @@
     <Image Include="resources\textures\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="resources\textures\register_icon.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="resources\textures\login_icon.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="resources\textures\ChildAccText.jpg">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="resources\textures\StandardAccText.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="resources\textures\user_picture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\textures\SeniorAccText.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="resources\NerdFont.ttf" />
     <Font Include="resources\PtRoot.ttf" />
   </ItemGroup>
 </Project>
