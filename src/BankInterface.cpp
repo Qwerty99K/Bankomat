@@ -23,13 +23,21 @@ bool isValidInput(const std::string& input) {
     std::string decimalPart = input.substr(decimalPos + 1);
     return decimalPart.size() <= 2;
 }
+
+std::string formatBalance(const std::string& balanceStr) {
+    float balance = std::stof(balanceStr);
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2) << balance; 
+    return oss.str();
+}
+
 BankInterface::BankInterface(sf::Font& clsFont, sf::RectangleShape& interfaceRect, std::vector<std::string> userDetails) :
     clsFont(clsFont), interfaceRect(REGISTER_RECT_SIZE), dimRect(sf::Vector2f(WIDTH, HEIGHT)), nameBox(INTERFACE_BOX_SIZE),
     userDetails(userDetails), lastNameBox(INTERFACE_BOX_SIZE), ageBox(INTERFACE_BOX_SIZE), addressBox(INTERFACE_BOX_SIZE),
     generateRaportBox(INTERFACE_BOX_SIZE), loginBox(INTERFACE_BOX_SIZE), balanceBox(INTERFACE_BOX_SIZE),
     transferBox(INTERFACE_BOX_SIZE), withdrawBox(INTERFACE_BOX_SIZE), depositBox(INTERFACE_BOX_SIZE), nameText("IMIE: " + userDetails[1], clsFont, FONT_SIZE),
     lastNameText("NAZ: " + userDetails[2], clsFont, FONT_SIZE), addressText("ADRES: " + userDetails[3], clsFont, FONT_SIZE),
-    ageText("WIEK: " + userDetails[4], clsFont, FONT_SIZE), loginText("LOGIN: " + userDetails[5], clsFont, FONT_SIZE), balanceText("$: " + userDetails[7], clsFont, FONT_SIZE),
+    ageText("WIEK: " + userDetails[4], clsFont, FONT_SIZE), loginText("LOGIN: " + userDetails[5], clsFont, FONT_SIZE), balanceText("$: " + formatBalance(userDetails[7]), clsFont, FONT_SIZE),
     generateRaportText("GENERUJ RAPORT", clsFont, FONT_SIZE), transferText("TRANSFER", clsFont, FONT_SIZE),
     withdrawText("WYPLAC", clsFont, FONT_SIZE), depositText("WPLAC", clsFont, FONT_SIZE), warning(clsFont), granted(clsFont){
     if (!bgBankT.loadFromFile(BACKGROUND_PATH)) {
@@ -597,7 +605,7 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
 
     sf::Vector2f acceptBoxPosition(window.getSize().x - 150, window.getSize().y - 100); // Position near bottom right corner
 
-    sf::Text acceptText("Wyjdz", clsFont, FONT_SIZE);
+    sf::Text acceptText("KONIEC", clsFont, FONT_SIZE);
     acceptText.setFillColor(sf::Color::Black);
     acceptText.setPosition(acceptBoxPosition.x, acceptBoxPosition.y - FONT_SIZE); // Adjusted position of the "KONIEC" button text
     bankIcon.setPosition(acceptText.getPosition().x - 275, acceptText.getPosition().y - 275);
@@ -655,7 +663,7 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
                         continue;
                     }
                 }
-                else if (acceptText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                else if (!(interfaceRect.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)))) {
                     return;
                 }
                 break;
@@ -663,11 +671,14 @@ void BankInterface::reportInterface(sf::RenderWindow& window, const std::string&
         }
 
         window.clear(sf::Color::White);
+
         for (const auto& textLine : reportTextLines) {
             window.draw(textLine);
         }
-        window.draw(activeAcceptBox);
+        window.draw(dimRect);
+        window.draw(interfaceRect);
         window.draw(acceptText);
+
         window.display();
     }
 }
