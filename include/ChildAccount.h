@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "../include/StandardAccount.h"
-
+#include "../include/Status.h"
 class ChildAccount : public StandardAccount {
 public:
 	ChildAccount(const std::string&, const std::string&,

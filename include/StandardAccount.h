@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "../include/Status.h"
 using ll = long long;
 
 
@@ -13,12 +14,6 @@ public:
 	virtual ll deposit(const ll&) const; // nie wiem czy bedziemy robic wirtualne, definicja bo kazda taka sama bedzie?
 	virtual ll withdraw(const ll&) const;
 	virtual ll transferFee() const; // platnosc za transfer kaski
-
-		//template<class T>
-		//ll transfer(T* ) const; // get account's 
-		//void getReport() const; // nie wiem jaki typ bedzie koncowo (jak bedziemy czytac)
-		//void getTransactionHistory() const; // nie wiem jak bedziemy czytac, krotsza nazwa
-
 
 private:
 	std::string name;
