@@ -170,7 +170,6 @@
     <None Include="resources\atm.db" />
     <None Include="packages.config" />
     <None Include="README.md" />
-    <None Include="resources\USERS_DATABASE.db" />
     <None Include="resources\users.db" />
   </ItemGroup>
   <ItemGroup>
